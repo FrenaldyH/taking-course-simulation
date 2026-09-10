@@ -1,0 +1,34 @@
+// Skema database proyek KRS.
+// Buka berkas ini dengan extension "dbdiagram" di VS Code untuk melihat diagramnya.
+//
+// Catatan: nama tabel di sini mengikuti yang benar-benar dibuat GORM.
+// GORM memakai bentuk jamak, sehingga struct MataKuliah menjadi tabel
+// "mata_kuliahs". Tabel "krs" dikunci namanya lewat method TableName().
+
+Table mahasiswas {
+  id         bigserial    [pk, increment]
+  nim        varchar(15)  [not null, unique, note: 'Nomor induk mahasiswa']
+  nama       varchar(100) [not null]
+  batas_sks  integer      [not null, default: 24, note: 'Maksimum SKS yang boleh diambil']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table mata_kuliahs {
+  id         bigserial    [pk, increment]
+  kode       varchar(10)  [not null, unique, note: 'Contoh: IF2010']
+  nama       varchar(100) [not null]
+  sks        integer      [not null]
+  kuota      integer      [not null, default: 40, note: 'Jumlah kursi tersedia']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table krs {
+  id             bigserial [pk, increment]
+  mahasiswa_id   bigint    [not null, ref: > mahasiswas.id]
+  mata_kuliah_id bigint    [not null, ref: > mata_kuliahs.id]
+  created_at     timestamp
+
+  note: 'Tabel penghubung: satu baris berarti satu mahasiswa mengambil satu mata kuliah'
+}

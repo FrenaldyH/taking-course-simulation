@@ -1,0 +1,190 @@
+basePath: /
+definitions:
+  internal_handler.AmbilMataKuliahInput:
+    properties:
+      mahasiswa_id:
+        example: 1
+        type: integer
+      mata_kuliah_id:
+        example: 2
+        type: integer
+    type: object
+  internal_handler.ErrorResponse:
+    properties:
+      error:
+        example: mata kuliah tidak ditemukan
+        type: string
+    type: object
+  internal_handler.MessageResponse:
+    properties:
+      message:
+        example: berhasil dibatalkan
+        type: string
+    type: object
+  internal_model.KRS:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      mahasiswa:
+        $ref: '#/definitions/internal_model.Mahasiswa'
+      mahasiswa_id:
+        type: integer
+      mata_kuliah:
+        $ref: '#/definitions/internal_model.MataKuliah'
+      mata_kuliah_id:
+        type: integer
+    type: object
+  internal_model.Mahasiswa:
+    properties:
+      batas_sks:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      nama:
+        type: string
+      nim:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  internal_model.MataKuliah:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      kode:
+        type: string
+      kuota:
+        type: integer
+      nama:
+        type: string
+      sks:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: |-
+    API pengisian KRS sederhana untuk modul belajar backend.
+    Mahasiswa memilih mata kuliah dengan tiga aturan: tidak boleh ganda, kuota tidak boleh terlampaui, dan total SKS tidak boleh melebihi batas.
+  title: KRS API
+  version: "1.0"
+paths:
+  /krs:
+    post:
+      consumes:
+      - application/json
+      description: Mendaftarkan mahasiswa ke sebuah mata kuliah. Ditolak jika mata
+        kuliah sudah diambil, kuota penuh, atau melebihi batas SKS.
+      parameters:
+      - description: Mahasiswa dan mata kuliah yang dipilih
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.AmbilMataKuliahInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_model.KRS'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      summary: Ambil mata kuliah
+      tags:
+      - krs
+  /krs/{id}:
+    delete:
+      description: Menghapus satu mata kuliah dari KRS mahasiswa
+      parameters:
+      - description: ID baris KRS
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      summary: Batalkan mata kuliah
+      tags:
+      - krs
+  /mahasiswa/{id}/krs:
+    get:
+      description: Menampilkan semua mata kuliah yang sudah diambil seorang mahasiswa
+      parameters:
+      - description: ID mahasiswa
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_model.KRS'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      summary: Lihat KRS mahasiswa
+      tags:
+      - krs
+  /mata-kuliah:
+    get:
+      description: Menampilkan semua mata kuliah yang ditawarkan semester ini
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_model.MataKuliah'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      summary: Daftar mata kuliah
+      tags:
+      - mata-kuliah
+swagger: "2.0"

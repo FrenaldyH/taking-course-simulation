@@ -1,0 +1,312 @@
+{
+	"info": {
+		"name": "KRS API: Workshop Backend",
+		"description": "Koleksi request untuk API pengisian KRS.\n\nCara pakai:\n1. Jalankan server: go run ./cmd\n2. Import koleksi ini ke Postman\n3. Jalankan request dari atas ke bawah\n\nFolder 'Skenario Aturan' berisi request yang sengaja ditolak server, untuk melihat ketiga aturan bisnis bekerja.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Dasar",
+			"item": [
+				{
+					"name": "Ping: cek server hidup",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ping",
+							"host": ["{{base_url}}"],
+							"path": ["ping"]
+						},
+						"description": "Balasan {\"message\":\"pong\"} berarti server hidup."
+					},
+					"response": []
+				},
+				{
+					"name": "Daftar mata kuliah",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/mata-kuliah",
+							"host": ["{{base_url}}"],
+							"path": ["mata-kuliah"]
+						},
+						"description": "Menampilkan 7 mata kuliah contoh. Catat kolom id, dipakai untuk request berikutnya."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "KRS",
+			"item": [
+				{
+					"name": "Ambil mata kuliah",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mahasiswa_id\": 1,\n    \"mata_kuliah_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/krs",
+							"host": ["{{base_url}}"],
+							"path": ["krs"]
+						},
+						"description": "Budi (id 1) mengambil IF2010 (id 1). Berhasil -> 201 Created."
+					},
+					"response": []
+				},
+				{
+					"name": "Lihat KRS mahasiswa",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/mahasiswa/1/krs",
+							"host": ["{{base_url}}"],
+							"path": ["mahasiswa", "1", "krs"]
+						},
+						"description": "Menampilkan mata kuliah yang sudah diambil Budi, lengkap dengan detail mata kuliahnya (hasil Preload di GORM)."
+					},
+					"response": []
+				},
+				{
+					"name": "Batalkan mata kuliah",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/krs/1",
+							"host": ["{{base_url}}"],
+							"path": ["krs", "1"]
+						},
+						"description": "Menghapus baris KRS dengan id 1. Perhatikan: yang dipakai adalah id baris KRS, bukan id mata kuliah."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Skenario Aturan",
+			"description": "Request yang sengaja ditolak, untuk melihat ketiga aturan bisnis bekerja.",
+			"item": [
+				{
+					"name": "Aturan 1: ambil mata kuliah yang sama dua kali",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mahasiswa_id\": 1,\n    \"mata_kuliah_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/krs",
+							"host": ["{{base_url}}"],
+							"path": ["krs"]
+						},
+						"description": "Kirim dua kali. Yang kedua ditolak 409 Conflict: 'mata kuliah ini sudah diambil'."
+					},
+					"response": []
+				},
+				{
+					"name": "Aturan 2a: isi kursi 1 dari 2 (IF2040)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mahasiswa_id\": 1,\n    \"mata_kuliah_id\": 4\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/krs",
+							"host": ["{{base_url}}"],
+							"path": ["krs"]
+						},
+						"description": "IF2040 kuotanya hanya 2 kursi. Ini kursi pertama."
+					},
+					"response": []
+				},
+				{
+					"name": "Aturan 2b: isi kursi 2 dari 2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mahasiswa_id\": 2,\n    \"mata_kuliah_id\": 4\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/krs",
+							"host": ["{{base_url}}"],
+							"path": ["krs"]
+						},
+						"description": "Kursi kedua terisi. Kuota sekarang penuh."
+					},
+					"response": []
+				},
+				{
+					"name": "Aturan 2c: ditolak, kuota penuh",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mahasiswa_id\": 3,\n    \"mata_kuliah_id\": 4\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/krs",
+							"host": ["{{base_url}}"],
+							"path": ["krs"]
+						},
+						"description": "Ditolak 409: 'kuota mata kuliah sudah penuh (2 dari 2 kursi terisi)'."
+					},
+					"response": []
+				},
+				{
+					"name": "Aturan 3: Andi melebihi batas SKS",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mahasiswa_id\": 3,\n    \"mata_kuliah_id\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/krs",
+							"host": ["{{base_url}}"],
+							"path": ["krs"]
+						},
+						"description": "Andi (id 3) batas SKS-nya 12. Ambil dulu mata kuliah id 1, 5, dan 2 (total 11 SKS), lalu jalankan request ini -> ditolak 409 karena akan menjadi 14 SKS."
+					},
+					"response": []
+				},
+				{
+					"name": "Error: mahasiswa tidak ada",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/mahasiswa/999/krs",
+							"host": ["{{base_url}}"],
+							"path": ["mahasiswa", "999", "krs"]
+						},
+						"description": "Ditolak 404 Not Found."
+					},
+					"response": []
+				},
+				{
+					"name": "Error: id bukan angka",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/mahasiswa/abc/krs",
+							"host": ["{{base_url}}"],
+							"path": ["mahasiswa", "abc", "krs"]
+						},
+						"description": "Ditolak 400 Bad Request: 'id harus berupa angka'."
+					},
+					"response": []
+				},
+				{
+					"name": "Error: field wajib kosong",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/krs",
+							"host": ["{{base_url}}"],
+							"path": ["krs"]
+						},
+						"description": "Ditolak 400: 'mahasiswa_id dan mata_kuliah_id wajib diisi'."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

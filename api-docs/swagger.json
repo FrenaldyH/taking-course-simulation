@@ -1,0 +1,284 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API pengisian KRS sederhana untuk modul belajar backend.\nMahasiswa memilih mata kuliah dengan tiga aturan: tidak boleh ganda, kuota tidak boleh terlampaui, dan total SKS tidak boleh melebihi batas.",
+        "title": "KRS API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/krs": {
+            "post": {
+                "description": "Mendaftarkan mahasiswa ke sebuah mata kuliah. Ditolak jika mata kuliah sudah diambil, kuota penuh, atau melebihi batas SKS.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "krs"
+                ],
+                "summary": "Ambil mata kuliah",
+                "parameters": [
+                    {
+                        "description": "Mahasiswa dan mata kuliah yang dipilih",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.AmbilMataKuliahInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/internal_model.KRS"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/krs/{id}": {
+            "delete": {
+                "description": "Menghapus satu mata kuliah dari KRS mahasiswa",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "krs"
+                ],
+                "summary": "Batalkan mata kuliah",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID baris KRS",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/mahasiswa/{id}/krs": {
+            "get": {
+                "description": "Menampilkan semua mata kuliah yang sudah diambil seorang mahasiswa",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "krs"
+                ],
+                "summary": "Lihat KRS mahasiswa",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID mahasiswa",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/internal_model.KRS"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/mata-kuliah": {
+            "get": {
+                "description": "Menampilkan semua mata kuliah yang ditawarkan semester ini",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mata-kuliah"
+                ],
+                "summary": "Daftar mata kuliah",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/internal_model.MataKuliah"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "internal_handler.AmbilMataKuliahInput": {
+            "type": "object",
+            "properties": {
+                "mahasiswa_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "mata_kuliah_id": {
+                    "type": "integer",
+                    "example": 2
+                }
+            }
+        },
+        "internal_handler.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "mata kuliah tidak ditemukan"
+                }
+            }
+        },
+        "internal_handler.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "berhasil dibatalkan"
+                }
+            }
+        },
+        "internal_model.KRS": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mahasiswa": {
+                    "$ref": "#/definitions/internal_model.Mahasiswa"
+                },
+                "mahasiswa_id": {
+                    "type": "integer"
+                },
+                "mata_kuliah": {
+                    "$ref": "#/definitions/internal_model.MataKuliah"
+                },
+                "mata_kuliah_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_model.Mahasiswa": {
+            "type": "object",
+            "properties": {
+                "batas_sks": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "nim": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_model.MataKuliah": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "kode": {
+                    "type": "string"
+                },
+                "kuota": {
+                    "type": "integer"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "sks": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

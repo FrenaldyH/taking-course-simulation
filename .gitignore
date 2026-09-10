@@ -1,0 +1,12 @@
+# Berkas environment: berisi password database asli, jangan pernah di-commit
+.env
+
+# Hasil kompilasi
+*.exe
+*.out
+bin/
+
+# Berkas editor dan sistem operasi
+.vscode/
+.idea/
+.DS_Store
