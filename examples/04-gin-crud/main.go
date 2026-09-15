@@ -1,5 +1,5 @@
 // Contoh 04: CRUD lengkap, tapi data disimpan di variabel (belum ada database).
-// Jalankan dari folder examples: go run ./04-gin-crud
+// Jalankan: go run ./examples/04-gin-crud
 package main
 
 import (

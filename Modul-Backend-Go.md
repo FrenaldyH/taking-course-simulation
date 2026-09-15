@@ -205,10 +205,19 @@ atau semacamnya.
 ### 5. Ambil contoh kode
 
 Langkah ini opsional. Seluruh kode yang dibahas ditulis lengkap di dalam modul,
-tapi contoh yang bisa langsung dijalankan tersedia di folder `Materi 3/examples`
-repo LBE-2026. Cara mengunduhnya ada di [Lampiran B](#lampiran-b-latihan-mandiri).
+tapi contoh yang bisa langsung dijalankan tersedia di branch `materi` repo
+LBE-2026:
 
-Setelah diunduh, masuk ke folder `Materi 3/examples` lalu:
+```bash
+git clone -b materi --single-branch https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026.git lbe-materi
+cd lbe-materi
+```
+
+`-b materi` langsung mengambil branch `materi`, bukan `main`. `--single-branch`
+membuat hanya branch itu yang diunduh. Cara lain tanpa Git ada di
+[Lampiran B](#lampiran-b-latihan-mandiri).
+
+Di dalam folder `lbe-materi`, jalankan:
 
 ```bash
 go mod download
@@ -228,7 +237,7 @@ PostgreSQL kamu.
 #### Verifikasi akhir
 
 ```bash
-go run ./01-hello
+go run ./examples/01-hello
 ```
 
 Harus muncul:
@@ -478,7 +487,7 @@ di VS Code membereskannya otomatis saat berkas disimpan.
 Contoh yang dibahas di bagian ini:
 
 ```bash
-go run ./01-hello
+go run ./examples/01-hello
 ```
 
 Ada dua cara menulis variabel:
@@ -602,7 +611,7 @@ tempatnya, bukan melompat ke penangan yang jauh.
 Contoh yang dibahas di bagian ini:
 
 ```bash
-go run ./02-struct
+go run ./examples/02-struct
 ```
 
 Keluarannya:
@@ -721,7 +730,7 @@ melimpah.
 ### Server pertama
 
 ```bash
-go run ./03-gin-ping
+go run ./examples/03-gin-ping
 ```
 
 Isinya:
@@ -834,7 +843,7 @@ terbaca tanpa mengingat arti angkanya.
 ### CRUD lengkap
 
 ```bash
-go run ./04-gin-crud
+go run ./examples/04-gin-crud
 ```
 
 Contoh ini punya lima alamat:
@@ -1060,7 +1069,7 @@ Hasil sebenarnya dari kelima alamat:
 
 Langkahnya:
 
-1. Jalankan `go run ./04-gin-crud`
+1. Jalankan `go run ./examples/04-gin-crud`
 2. Tambah satu mata kuliah lewat `POST`
 3. Tekan `Ctrl+C` untuk mematikan server
 4. Jalankan lagi, lalu buka `GET /mata-kuliah`
@@ -1129,7 +1138,7 @@ sendiri.
 Jalankan server contoh dari Bab 03, biarkan hidup di terminal terpisah:
 
 ```bash
-go run ./04-gin-crud
+go run ./examples/04-gin-crud
 ```
 
 Semua percobaan di bab ini mengarah ke server tersebut.
@@ -1689,7 +1698,7 @@ Beberapa tag digabung dengan titik koma: `gorm:"size:10;not null;unique"`.
 ### Menyambung ke database
 
 ```bash
-go run ./05-gorm-connect
+go run ./examples/05-gorm-connect
 ```
 
 Inti kodenya:
@@ -1751,7 +1760,7 @@ berisiko untuk dilakukan otomatis.
 ### CRUD dengan GORM
 
 ```bash
-go run ./06-gorm-crud
+go run ./examples/06-gorm-crud
 ```
 
 #### Create
@@ -2049,17 +2058,18 @@ mencukupi.
 
 ## Bab 07: Swagger
 
-> **Mulai bab ini pembahasan berpindah ke proyek KRS**, yang berada di folder
-> `Materi 3/BE` repo LBE-2026. Clone dulu kalau belum:
+> **Mulai bab ini pembahasan berpindah ke proyek KRS**, yang berada di branch
+> `project-backend` repo LBE-2026. Clone dulu kalau belum:
 >
 > ```bash
-> git clone https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026.git
-> cd "LBE-2026/Materi 3/BE"
+> git clone -b project-backend --single-branch https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026.git krs-api
+> cd krs-api
 > cp .env.example .env      # isi password PostgreSQL kamu
 > go mod download
 > ```
 >
-> Tanda kutip pada `cd` wajib, karena nama folder `Materi 3` mengandung spasi.
+> Nama `krs-api` di akhir perintah clone adalah nama folder tujuannya, supaya
+> tidak bertabrakan dengan folder `lbe-materi` dari Bab 00.
 >
 > Folder `examples/` yang dipakai Bab 01 sampai 06 tidak lagi diperlukan mulai
 > dari sini.
@@ -2334,8 +2344,8 @@ belajar satu hal pada satu waktu, tapi bukan begitu cara proyek nyata ditulis.
 
 Bab ini membedah proyek yang sudah jadi: **API pengisian KRS**.
 
-> Kodenya ada di folder
-> [`Materi 3/BE`](https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/tree/main/Materi%203/BE).
+> Kodenya ada di branch
+> [`project-backend`](https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/tree/project-backend).
 > Buka di VS Code sambil membaca bab ini, penjelasannya menunjuk berkas
 > demi berkas. Kalau belum di-clone, langkahnya ada di
 > [Bab 07](#bab-07-swagger).
@@ -2868,9 +2878,8 @@ modul, jadi materi di atas bisa dibaca tanpa mengunduh apa pun.
 
 Enam contoh yang bisa langsung dijalankan:
 
-- Telusuri: https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/tree/main/Materi%203/examples
-- Unduh ZIP: https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/archive/refs/heads/main.zip
-  (berisi seluruh repo, contohnya ada di folder `Materi 3/examples`)
+- Telusuri: https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/tree/materi/examples
+- Unduh ZIP: https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/archive/refs/heads/materi.zip
 
 
 | Folder                     | Dipakai di | Isi                                  |
@@ -2882,11 +2891,11 @@ Enam contoh yang bisa langsung dijalankan:
 | `examples/05-gorm-connect` | Bab 06     | Koneksi PostgreSQL dan`AutoMigrate`  |
 | `examples/06-gorm-crud`    | Bab 06     | CRUD, relasi, dan`Preload`           |
 
-Menjalankannya, dari folder `Materi 3/examples`:
+Menjalankannya, dari folder hasil clone atau ekstrak ZIP:
 
 ```bash
 go mod download
-go run ./01-hello
+go run ./examples/01-hello
 ```
 
 Contoh 05 dan 06 memerlukan PostgreSQL yang sudah jalan dan berkas `.env`.
@@ -2894,9 +2903,9 @@ Sisanya jalan tanpa persiapan tambahan.
 
 ### Proyek KRS
 
-Kode yang dibedah di Bab 07 dan Bab 08 ada di folder `Materi 3/BE`:
+Kode yang dibedah di Bab 07 dan Bab 08 ada di branch `project-backend`:
 
-https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/tree/main/Materi%203/BE
+https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/tree/project-backend
 
 
 | Berkas                                    | Isi                                                                                       |
@@ -2908,8 +2917,8 @@ https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/tree/main/Materi%203/B
 Menjalankannya:
 
 ```bash
-git clone https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026.git
-cd "LBE-2026/Materi 3/BE"
+git clone -b project-backend --single-branch https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026.git krs-api
+cd krs-api
 cp .env.example .env
 go mod download
 go run ./cmd

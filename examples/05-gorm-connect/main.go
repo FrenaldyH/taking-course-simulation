@@ -1,5 +1,5 @@
 // Contoh 05: Menyambung ke PostgreSQL dan membuat tabel dari struct.
-// Jalankan dari folder examples: go run ./05-gorm-connect
+// Jalankan: go run ./examples/05-gorm-connect
 // Butuh berkas .env berisi kredensial PostgreSQL.
 package main
 

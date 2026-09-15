@@ -1,5 +1,5 @@
 // Contoh 01: Program Go pertama, variabel dan tipe data.
-// Jalankan dari folder examples: go run ./01-hello
+// Jalankan: go run ./examples/01-hello
 package main
 
 import "fmt"

@@ -1,5 +1,5 @@
 // Contoh 03: Server Gin paling minimal.
-// Jalankan dari folder examples: go run ./03-gin-ping
+// Jalankan: go run ./examples/03-gin-ping
 // Lalu buka http://localhost:8080/ping di browser.
 package main
 
