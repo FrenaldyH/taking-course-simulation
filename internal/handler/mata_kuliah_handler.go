@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/FrenaldyH/taking-course-simulation/internal/service"
+	"krs-api/internal/service"
 )
 
 // DaftarMataKuliah handles GET /mata-kuliah.

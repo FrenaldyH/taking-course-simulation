@@ -3,7 +3,7 @@ package config
 import (
 	"log"
 
-	"github.com/FrenaldyH/taking-course-simulation/internal/model"
+	"krs-api/internal/model"
 )
 
 // SeedData inserts sample rows on first run.

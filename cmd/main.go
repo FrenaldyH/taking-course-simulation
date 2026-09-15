@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/FrenaldyH/taking-course-simulation/config"
-	"github.com/FrenaldyH/taking-course-simulation/internal/model"
-	"github.com/FrenaldyH/taking-course-simulation/routes"
+	"krs-api/config"
+	"krs-api/internal/model"
+	"krs-api/routes"
 )
 
 // @title			KRS API

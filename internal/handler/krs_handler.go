@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/FrenaldyH/taking-course-simulation/internal/service"
+	"krs-api/internal/service"
 )
 
 // AmbilMataKuliahInput is the request body for taking a course.

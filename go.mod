@@ -1,4 +1,4 @@
-module github.com/FrenaldyH/taking-course-simulation
+module krs-api
 
 go 1.25.0
 

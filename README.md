@@ -11,11 +11,7 @@ tiga aturan:
 3. Total SKS tidak boleh melebihi batas SKS mahasiswa
 
 Materi belajar Go, Gin, GORM, PostgreSQL, Postman, dan Swagger yang membedah proyek
-ini disusun sebagai modul terpisah.
-
-<!-- TODO: pasang tautan ke modul di sini setelah alamatnya final. -->
-<!-- Modul dibagikan sebagai ZIP dan dikelola pihak lain, jadi alamatnya belum ada. -->
-<!-- Berkas yang perlu diubah kalau alamatnya sudah ada: baris ini dan bagian Struktur. -->
+ini ada di wiki: [Materi 3 ‐ Backend](https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/wiki/Materi-3-%E2%80%90-Backend).
 
 
 ## Kebutuhan
@@ -121,9 +117,8 @@ grep -rl "gorm.io" --include="*.go" .
 
 Keluarannya hanya berkas di `config/` dan `internal/repo/`.
 
-Pembahasan struktur ini berkas demi berkas ada di bab 08 modul.
-
-<!-- TODO: tautkan ke bab 08 modul setelah alamatnya final. -->
+Pembahasan struktur ini berkas demi berkas ada di
+[Bab 08 materi](https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/wiki/Materi-3-%E2%80%90-Backend#bab-08-studi-kasus-sistem-krs).
 
 
 ## Swagger

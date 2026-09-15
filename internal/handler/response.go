@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/FrenaldyH/taking-course-simulation/internal/service"
+	"krs-api/internal/service"
 )
 
 // ErrorResponse is the single error shape returned by every endpoint.
@@ -35,14 +35,16 @@ func parseID(c *gin.Context, nama string) (uint, bool) {
 // respondError maps a service error to its HTTP status code.
 func respondError(c *gin.Context, err error) {
 	switch {
-	case errors.Is(err, service.ErrMahasiswaTidakAda),
+	case
+		errors.Is(err, service.ErrMahasiswaTidakAda),
 		errors.Is(err, service.ErrMataKuliahTidakAda),
 		errors.Is(err, service.ErrKRSTidakAda):
 		c.JSON(http.StatusNotFound, ErrorResponse{Error: err.Error()})
 
 	// Conflict, not BadRequest: the request is well formed but the current
 	// state rejects it.
-	case errors.Is(err, service.ErrSudahDiambil),
+	case
+		errors.Is(err, service.ErrSudahDiambil),
 		errors.Is(err, service.ErrKuotaPenuh),
 		errors.Is(err, service.ErrMelebihiBatasSKS):
 		c.JSON(http.StatusConflict, ErrorResponse{Error: err.Error()})
@@ -51,3 +53,4 @@ func respondError(c *gin.Context, err error) {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 	}
 }
+

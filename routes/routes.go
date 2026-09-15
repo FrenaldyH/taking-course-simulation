@@ -8,8 +8,8 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 
 	// Blank import: registers the generated docs read by Swagger UI.
-	_ "github.com/FrenaldyH/taking-course-simulation/api-docs"
-	"github.com/FrenaldyH/taking-course-simulation/internal/handler"
+	_ "krs-api/api-docs"
+	"krs-api/internal/handler"
 )
 
 // RegisterRoutes maps every URL to the handler that answers it.

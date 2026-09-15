@@ -5,8 +5,8 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/FrenaldyH/taking-course-simulation/config"
-	"github.com/FrenaldyH/taking-course-simulation/internal/model"
+	"krs-api/config"
+	"krs-api/internal/model"
 )
 
 // CreateKRS stores a new entry and fills its ID.

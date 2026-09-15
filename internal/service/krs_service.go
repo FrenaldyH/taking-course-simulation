@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/FrenaldyH/taking-course-simulation/internal/model"
-	"github.com/FrenaldyH/taking-course-simulation/internal/repo"
+	"krs-api/internal/model"
+	"krs-api/internal/repo"
 )
 
 // Sentinel errors for the business rules; the handler maps them to status codes.
