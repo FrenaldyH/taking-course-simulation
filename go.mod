@@ -1,6 +1,4 @@
-// Nama module ini sementara. Sesuaikan kalau modul diterbitkan ke repo sendiri.
-// Contoh-contoh tidak saling impor, jadi mengubah baris ini aman.
-module github.com/FrenaldyH/modul-backend-go
+module contoh-backend
 
 go 1.25.0
 

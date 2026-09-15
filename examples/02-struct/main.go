@@ -1,5 +1,5 @@
 // Contoh 02: Struct, error handling, dan pointer.
-// Jalankan: go run ./examples/02-struct
+// Jalankan dari folder examples: go run ./02-struct
 package main
 
 import (

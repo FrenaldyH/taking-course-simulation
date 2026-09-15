@@ -1,5 +1,5 @@
 // Contoh 06: CRUD dengan GORM, termasuk relasi antar tabel.
-// Jalankan: go run ./examples/06-gorm-crud
+// Jalankan dari folder examples: go run ./06-gorm-crud
 // Butuh berkas .env berisi kredensial PostgreSQL.
 package main
 

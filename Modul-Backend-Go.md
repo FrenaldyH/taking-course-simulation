@@ -8,19 +8,20 @@ istilah baru dijelaskan saat pertama kali muncul.
 
 ## Daftar Isi
 
-| Bab | Isi | Perkiraan baca |
-|---|---|---|
-| [Bab 00: Persiapan](#bab-00-persiapan) | Instalasi Go, PostgreSQL, VS Code, Postman | 45 menit, kerjakan sebelum kelas |
-| [Bab 01: Backend Dasar](#bab-01-backend-dasar) | Client, server, HTTP, API, JSON | 20 menit |
-| [Bab 02: Go Dasar](#bab-02-go-dasar) | Sintaks Go seperlunya untuk backend | 30 menit |
-| [Bab 03: Gin](#bab-03-gin) | Web server, routing, handler | 30 menit |
-| [Bab 04: Postman](#bab-04-postman) | Menguji API: POST, PUT, DELETE | 15 menit |
-| [Bab 05: PostgreSQL](#bab-05-postgresql) | Database relasional, tabel, SQL dasar | 25 menit |
-| [Bab 06: GORM](#bab-06-gorm) | Menyambungkan Go ke database | 35 menit |
-| [Bab 07: Swagger](#bab-07-swagger) | Dokumentasi API otomatis | 20 menit |
-| [Bab 08: Studi Kasus Sistem KRS](#bab-08-studi-kasus-sistem-krs) | Bedah proyek nyata dan menambah fitur | 40 menit |
-| [Lampiran A: Cheat Sheet Terminal](#lampiran-a-cheat-sheet-terminal) | Referensi perintah | |
-| [Lampiran B: Latihan Mandiri](#lampiran-b-latihan-mandiri) | Contoh kode dan proyek yang bisa diunduh | |
+
+| Bab                                                                  | Isi                                        | Perkiraan baca                   |
+| ---------------------------------------------------------------------- | -------------------------------------------- | ---------------------------------- |
+| [Bab 00: Persiapan](#bab-00-persiapan)                               | Instalasi Go, PostgreSQL, VS Code, Postman | 45 menit, kerjakan sebelum kelas |
+| [Bab 01: Backend Dasar](#bab-01-backend-dasar)                       | Client, server, HTTP, API, JSON            | 20 menit                         |
+| [Bab 02: Go Dasar](#bab-02-go-dasar)                                 | Sintaks Go seperlunya untuk backend        | 30 menit                         |
+| [Bab 03: Gin](#bab-03-gin)                                           | Web server, routing, handler               | 30 menit                         |
+| [Bab 04: Postman](#bab-04-postman)                                   | Menguji API: POST, PUT, DELETE             | 15 menit                         |
+| [Bab 05: PostgreSQL](#bab-05-postgresql)                             | Database relasional, tabel, SQL dasar      | 25 menit                         |
+| [Bab 06: GORM](#bab-06-gorm)                                         | Menyambungkan Go ke database               | 35 menit                         |
+| [Bab 07: Swagger](#bab-07-swagger)                                   | Dokumentasi API otomatis                   | 20 menit                         |
+| [Bab 08: Studi Kasus Sistem KRS](#bab-08-studi-kasus-sistem-krs)     | Bedah proyek nyata dan menambah fitur      | 40 menit                         |
+| [Lampiran A: Cheat Sheet Terminal](#lampiran-a-cheat-sheet-terminal) | Referensi perintah                         |                                  |
+| [Lampiran B: Latihan Mandiri](#lampiran-b-latihan-mandiri)           | Contoh kode dan proyek yang bisa diunduh   |                                  |
 
 Dua urutan yang sengaja dipilih:
 
@@ -37,12 +38,13 @@ database. Tanpa mengetahui bentuk database yang diajak bicara, perintah seperti
 
 Bab ini dikerjakan sebelum kelas dimulai, karena seluruhnya berupa instalasi.
 
-| Alat | Gunanya |
-|---|---|
-| **Go** | Bahasa yang kita pakai menulis backend |
-| **VS Code** | Tempat menulis kode |
+
+| Alat           | Gunanya                                 |
+| ---------------- | ----------------------------------------- |
+| **Go**         | Bahasa yang kita pakai menulis backend  |
+| **VS Code**    | Tempat menulis kode                     |
 | **PostgreSQL** | Database, tempat data disimpan permanen |
-| **Postman** | Alat untuk menguji API yang kita buat |
+| **Postman**    | Alat untuk menguji API yang kita buat   |
 
 ### 1. Install Go
 
@@ -113,10 +115,60 @@ sudo systemctl start postgresql
 sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
 ```
 
+Paket `postgresql` di atas **tidak menyertakan pgAdmin** (beda dengan installer
+Windows/macOS). Untuk GUI-nya, tambah repo resmi pgAdmin lalu install terpisah:
+
+```bash
+curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /etc/apt/keyrings/packages-pgadmin-org.gpg
+sudo sh -c 'echo "deb [signed-by=/etc/apt/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+sudo apt install pgadmin4-desktop
+```
+
+Buka lewat app launcher (cari "pgAdmin 4"). Paket ini tidak menaruh symlink
+di `PATH`, jadi kalau mau buka dari terminal pakai path lengkapnya:
+`/usr/pgadmin4/bin/pgadmin4`. Saat pertama dibuka, pgAdmin minta dibuatkan
+**master password** — ini password untuk pgAdmin itu sendiri (beda dari
+password PostgreSQL), dipakai untuk enkripsi kredensial yang kamu simpan di
+dalamnya.
+
+#### Daftarkan koneksi ke server (khusus Linux, atau kalau pgAdmin masih kosong)
+
+Di Windows/macOS, installer biasanya **otomatis** mendaftarkan koneksi ke
+server yang baru dipasang — begitu pgAdmin dibuka, satu server sudah muncul
+di panel kiri. Di Linux (karena pgAdmin dipasang terpisah dari PostgreSQL),
+panel **Servers** di kiri masih **kosong**, harus didaftarkan manual dulu.
+
+Cara tahu mana yang berlaku: buka pgAdmin, lihat panel kiri. Kalau sudah ada
+satu server dengan nama (misal "PostgreSQL 16"), langsung expand dan lanjut
+ke langkah berikutnya, lewati bagian ini. Kalau kosong, ikuti langkah:
+
+1. Klik **"Add New Server"** (tombol di tengah layar, atau klik kanan
+   **Servers** di panel kiri → **Register → Server**)
+2. Tab **General** → **Name**: bebas, misal `PostgreSQL Lokal`
+3. Tab **Connection**, isi:
+
+
+   | Field                | Isi                                           |
+   | ---------------------- | ----------------------------------------------- |
+   | Host name/address    | `localhost`                                   |
+   | Port                 | `5432`                                        |
+   | Maintenance database | `postgres`                                    |
+   | Username             | `postgres`                                    |
+   | Password             | password yang tadi kamu catat/set             |
+   | Save password?       | centang, supaya tidak diminta ulang tiap buka |
+4. Klik **Save**
+
+Server muncul di panel kiri dengan tanda berhasil connect. Kalau ini
+pertama kalinya kamu centang "Save password", pgAdmin mungkin minta dibuatkan
+**master password** dulu — itu password punya pgAdmin sendiri (beda dari
+password PostgreSQL di atas), sekali buat lalu dipakai terus tiap buka
+pgAdmin. Kalau tidak diminta, berarti sudah ada dari instalasi sebelumnya —
+tidak masalah, lanjut saja.
+
 #### Buat satu database kosong
 
-Lewat pgAdmin: login dengan password tadi, klik kanan `Databases`, pilih `Create`,
-lalu `Database`, beri nama **`alpro_db`**, Save.
+Lewat pgAdmin: klik kanan `Databases` di bawah server yang tadi didaftarkan,
+pilih `Create`, lalu `Database`, beri nama **`alpro_db`**, Save.
 
 Lewat terminal:
 
@@ -130,11 +182,12 @@ Database `alpro_db` muncul di daftar sebelah kiri pgAdmin.
 
 #### Kalau error
 
-| Pesan | Artinya | Perbaikan |
-|---|---|---|
-| `connection refused` | Layanan PostgreSQL belum jalan | Windows: buka `services.msc`, cari `postgresql`, klik Start. Linux: `sudo systemctl start postgresql` |
-| `password authentication failed` | Password salah | Ulangi instalasi atau reset password |
-| `port 5432 already in use` | Sudah ada PostgreSQL lain terpasang | Pakai yang sudah ada, tidak perlu pasang dua |
+
+| Pesan                            | Artinya                             | Perbaikan                                                                                            |
+| ---------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `connection refused`             | Layanan PostgreSQL belum jalan      | Windows: buka`services.msc`, cari `postgresql`, klik Start. Linux: `sudo systemctl start postgresql` |
+| `password authentication failed` | Password salah                      | Ulangi instalasi atau reset password                                                                 |
+| `port 5432 already in use`       | Sudah ada PostgreSQL lain terpasang | Pakai yang sudah ada, tidak perlu pasang dua                                                         |
 
 ### 4. Install Postman
 
@@ -152,10 +205,10 @@ atau semacamnya.
 ### 5. Ambil contoh kode
 
 Langkah ini opsional. Seluruh kode yang dibahas ditulis lengkap di dalam modul,
-tapi contoh yang bisa langsung dijalankan tersedia sebagai paket terpisah. Alamat
-unduhannya ada di [Lampiran B](#lampiran-b-latihan-mandiri).
+tapi contoh yang bisa langsung dijalankan tersedia di folder `Materi 3/examples`
+repo LBE-2026. Cara mengunduhnya ada di [Lampiran B](#lampiran-b-latihan-mandiri).
 
-Setelah paketnya diekstrak, masuk ke foldernya lalu:
+Setelah diunduh, masuk ke folder `Materi 3/examples` lalu:
 
 ```bash
 go mod download
@@ -175,7 +228,7 @@ PostgreSQL kamu.
 #### Verifikasi akhir
 
 ```bash
-go run ./examples/01-hello
+go run ./01-hello
 ```
 
 Harus muncul:
@@ -202,11 +255,12 @@ Bab ini tidak memuat kode. Isinya istilah dasar yang dipakai di bab berikutnya.
 
 Analogi ini dipakai berulang sampai bab terakhir.
 
-| Bagian restoran | Padanannya |
-|---|---|
-| **Ruang makan**: tempat pelanggan duduk, membaca menu, memesan | **Frontend**: yang dilihat dan disentuh pengguna |
-| **Dapur**: menerima pesanan, mengolah, mengirim hasil keluar | **Backend**: yang memproses, tidak terlihat pengguna |
-| **Gudang bahan**: menyimpan bahan, isinya tetap ada walau restoran tutup | **Database**: menyimpan data secara permanen |
+
+| Bagian restoran                                                          | Padanannya                                           |
+| -------------------------------------------------------------------------- | ------------------------------------------------------ |
+| **Ruang makan**: tempat pelanggan duduk, membaca menu, memesan           | **Frontend**: yang dilihat dan disentuh pengguna     |
+| **Dapur**: menerima pesanan, mengolah, mengirim hasil keluar             | **Backend**: yang memproses, tidak terlihat pengguna |
+| **Gudang bahan**: menyimpan bahan, isinya tetap ada walau restoran tutup | **Database**: menyimpan data secara permanen         |
 
 Aturan pentingnya: **pelanggan tidak pernah masuk ke dapur, dan tidak pernah
 mengambil sendiri bahan dari gudang.** Semua permintaan lewat pelayan.
@@ -238,18 +292,20 @@ kembali ke prompt: server sedang menunggu request, bukan hang. Hentikan dengan
 
 Request berisi tiga hal:
 
-| Bagian | Pertanyaan yang dijawab | Contoh |
-|---|---|---|
-| **Method** | Mau melakukan apa? | `POST` |
-| **URL** | Ke bagian mana? | `/mata-kuliah` |
-| **Body** | Data apa yang dibawa? | `{"kode": "IF2010", "nama": "Alpro"}` |
+
+| Bagian     | Pertanyaan yang dijawab | Contoh                                |
+| ------------ | ------------------------- | --------------------------------------- |
+| **Method** | Mau melakukan apa?      | `POST`                                |
+| **URL**    | Ke bagian mana?         | `/mata-kuliah`                        |
+| **Body**   | Data apa yang dibawa?   | `{"kode": "IF2010", "nama": "Alpro"}` |
 
 Response berisi dua hal:
 
-| Bagian | Pertanyaan yang dijawab | Contoh |
-|---|---|---|
-| **Status** | Berhasil atau tidak? | `201` |
-| **Body** | Data apa yang dikembalikan? | `{"id": 1, "kode": "IF2010"}` |
+
+| Bagian     | Pertanyaan yang dijawab     | Contoh                        |
+| ------------ | ----------------------------- | ------------------------------- |
+| **Status** | Berhasil atau tidak?        | `201`                         |
+| **Body**   | Data apa yang dikembalikan? | `{"id": 1, "kode": "IF2010"}` |
 
 #### Melihat request asli
 
@@ -269,12 +325,13 @@ tabel di atas.
 Method adalah niat dari sebuah request. Hampir semua yang dilakukan aplikasi
 jatuh ke salah satu dari empat ini:
 
-| Method | Artinya | Di restoran | Istilah CRUD |
-|---|---|---|---|
-| `GET` | Ambil atau lihat data | Lihat menu | **R**ead |
-| `POST` | Kirim data baru | Pesan makanan | **C**reate |
-| `PUT` | Ubah data yang sudah ada | Ganti pesanan | **U**pdate |
-| `DELETE` | Hapus data | Batalkan pesanan | **D**elete |
+
+| Method   | Artinya                  | Di restoran      | Istilah CRUD |
+| ---------- | -------------------------- | ------------------ | -------------- |
+| `GET`    | Ambil atau lihat data    | Lihat menu       | **R**ead     |
+| `POST`   | Kirim data baru          | Pesan makanan    | **C**reate   |
+| `PUT`    | Ubah data yang sudah ada | Ganti pesanan    | **U**pdate   |
+| `DELETE` | Hapus data               | Batalkan pesanan | **D**elete   |
 
 **CRUD** = Create, Read, Update, Delete. Keempat operasi ini ditulis kodenya
 mulai Bab 03.
@@ -284,11 +341,12 @@ mulai Bab 03.
 Setiap response membawa satu angka yang meringkas hasilnya. Kelompok angkanya
 sudah menjelaskan banyak:
 
-| Kelompok | Artinya | Contoh yang sering muncul |
-|---|---|---|
-| **2xx** | Berhasil | `200` OK: permintaan sukses; `201` Created: data baru terbuat |
-| **4xx** | Salah di sisi **client** | `400` Bad Request: data kiriman tidak valid; `404` Not Found: alamatnya tidak ada |
-| **5xx** | Salah di sisi **server** | `500` Internal Server Error: kode kita yang bermasalah |
+
+| Kelompok | Artinya                 | Contoh yang sering muncul                                                         |
+| ---------- | ------------------------- | ----------------------------------------------------------------------------------- |
+| **2xx**  | Berhasil                | `200` OK: permintaan sukses; `201` Created: data baru terbuat                     |
+| **4xx**  | Salah di sisi**client** | `400` Bad Request: data kiriman tidak valid; `404` Not Found: alamatnya tidak ada |
+| **5xx**  | Salah di sisi**server** | `500` Internal Server Error: kode kita yang bermasalah                            |
 
 **4xx berarti kiriman client salah, 5xx berarti kode server bermasalah.** Angka
 ini menunjukkan di sisi mana kesalahan harus dicari.
@@ -301,11 +359,12 @@ menjawab, hanya saja alamat yang dibuka belum dibuat.
 API adalah daftar permintaan yang boleh diajukan ke sebuah server. Seperti menu
 di restoran.
 
-| Menu memberi tahu | API memberi tahu |
-|---|---|
-| Apa saja yang bisa dipesan | Alamat apa saja yang tersedia |
-| Bagaimana cara memesannya | Method dan data apa yang harus dikirim |
-| Apa yang akan diterima | Response seperti apa yang dibalas |
+
+| Menu memberi tahu          | API memberi tahu                       |
+| ---------------------------- | ---------------------------------------- |
+| Apa saja yang bisa dipesan | Alamat apa saja yang tersedia          |
+| Bagaimana cara memesannya  | Method dan data apa yang harus dikirim |
+| Apa yang akan diterima     | Response seperti apa yang dibalas      |
 
 Yang **tidak** diberitahukan: menu tidak memuat cara memasak, API tidak memuat
 isi kode.
@@ -353,10 +412,11 @@ Daftar beberapa data ditulis dalam kurung siku:
 
 Data bisa saja disimpan di variabel program. Perbandingannya:
 
-| Disimpan di variabel | Disimpan di database |
-|---|---|
+
+| Disimpan di variabel                               | Disimpan di database                                 |
+| ---------------------------------------------------- | ------------------------------------------------------ |
 | Data hidup di memori (RAM) selama program berjalan | Data ditulis ke penyimpanan permanen di luar program |
-| Server dimatikan, **semua data hilang** | Server dimatikan, **data tetap aman** |
+| Server dimatikan,**semua data hilang**             | Server dimatikan,**data tetap aman**                 |
 
 Istilahnya **persistence**.
 
@@ -418,7 +478,7 @@ di VS Code membereskannya otomatis saat berkas disimpan.
 Contoh yang dibahas di bagian ini:
 
 ```bash
-go run ./examples/01-hello
+go run ./01-hello
 ```
 
 Ada dua cara menulis variabel:
@@ -454,11 +514,12 @@ dipakai.
 Variabel yang dideklarasikan tanpa nilai **tidak berisi sampah acak**. Go
 mengisinya dengan nilai nol sesuai tipenya:
 
-| Tipe | Nilai awal |
-|---|---|
-| `int` | `0` |
+
+| Tipe     | Nilai awal         |
+| ---------- | -------------------- |
+| `int`    | `0`                |
 | `string` | `""` (teks kosong) |
-| `bool` | `false` |
+| `bool`   | `false`            |
 
 #### Slice: daftar yang bisa bertambah
 
@@ -541,7 +602,7 @@ tempatnya, bukan melompat ke penangan yang jauh.
 Contoh yang dibahas di bagian ini:
 
 ```bash
-go run ./examples/02-struct
+go run ./02-struct
 ```
 
 Keluarannya:
@@ -572,10 +633,11 @@ tambahSKS(&daftar[0], 4)   // tanda & berarti "ambil alamat dari"
 
 Dua tanda:
 
-| Tanda | Artinya |
-|---|---|
-| `&nilai` | Ambil alamat dari sebuah nilai |
-| `*Tipe` | Tipe yang berisi alamat, bukan nilainya langsung |
+
+| Tanda    | Artinya                                          |
+| ---------- | -------------------------------------------------- |
+| `&nilai` | Ambil alamat dari sebuah nilai                   |
+| `*Tipe`  | Tipe yang berisi alamat, bukan nilainya langsung |
 
 Sebatas itu yang diperlukan modul ini. Di Bab 06, `db.Create(&mahasiswa)` ditulis
 dengan `&` karena GORM perlu **mengubah** struct itu untuk mengisi ID dari
@@ -614,17 +676,18 @@ perdebatan soal tab versus spasi.
 
 ### Ringkasan
 
-| Hal | Intinya |
-|---|---|
-| `package main` + `func main()` | Titik mulai program |
-| `:=` | Cara singkat membuat variabel |
-| Tipe statis | Tipe tidak bisa berubah; konversi ditulis manual |
-| Zero value | Variabel kosong berisi `0`, `""`, atau `false`, bukan sampah |
-| **Struct** | Cetakan data; nanti jadi tabel di database |
-| Huruf besar di awal | Menentukan bisa atau tidaknya diakses package lain, bukan gaya penulisan |
-| **`if err != nil`** | Cara Go menangani error; tidak ada try/catch |
-| **Pointer `&`** | Dipakai kalau fungsi perlu mengubah nilai aslinya |
-| `go get`, `go mod tidy` | Mengelola pustaka |
+
+| Hal                            | Intinya                                                                  |
+| -------------------------------- | -------------------------------------------------------------------------- |
+| `package main` + `func main()` | Titik mulai program                                                      |
+| `:=`                           | Cara singkat membuat variabel                                            |
+| Tipe statis                    | Tipe tidak bisa berubah; konversi ditulis manual                         |
+| Zero value                     | Variabel kosong berisi`0`, `""`, atau `false`, bukan sampah              |
+| **Struct**                     | Cetakan data; nanti jadi tabel di database                               |
+| Huruf besar di awal            | Menentukan bisa atau tidaknya diakses package lain, bukan gaya penulisan |
+| **`if err != nil`**            | Cara Go menangani error; tidak ada try/catch                             |
+| **Pointer `&`**                | Dipakai kalau fungsi perlu mengubah nilai aslinya                        |
+| `go get`, `go mod tidy`        | Mengelola pustaka                                                        |
 
 Yang dicetak tebal muncul terus sampai bab terakhir.
 
@@ -637,14 +700,19 @@ Bab ini membangun web server pertama yang bisa menjawab request dari browser.
 ### Apa itu Gin
 
 Go punya pustaka bawaan untuk membuat web server, `net/http`. Dengan pustaka itu
-saja, hal yang selalu dibutuhkan harus ditulis berulang: mencocokkan URL, membaca
-angka dari alamat, mengubah struct jadi JSON. Gin menyediakannya sudah jadi.
+saja, hal yang selalu dibutuhkan harus ditulis berulang: mengubah struct jadi
+JSON, memasang header, membaca body, mencatat log request. Gin menyediakannya
+sudah jadi.
 
-| Tanpa Gin (`net/http`) | Dengan Gin |
-|---|---|
-| Cocokkan URL manual dengan `if` dan pemotongan teks | `router.GET("/mata-kuliah/:id", ...)` |
-| Ubah data ke JSON manual | `c.JSON(200, data)` |
-| Baca body request manual | `c.ShouldBindJSON(&data)` |
+
+| Tanpa Gin (`net/http`)                                                              | Dengan Gin                  |
+| ------------------------------------------------------------------------------------- | ----------------------------- |
+| `w.Header().Set(...)`, `w.WriteHeader(...)`, lalu `json.NewEncoder(w).Encode(data)` | `c.JSON(200, data)`         |
+| `json.NewDecoder(r.Body).Decode(&data)`                                             | `c.ShouldBindJSON(&data)`   |
+| Log setiap request ditulis sendiri                                                  | Sudah ada di`gin.Default()` |
+
+Perbandingan kode lengkapnya ada di
+[Tanpa Gin: kode yang sama dengan net/http](#tanpa-gin-kode-yang-sama-dengan-nethttp).
 
 Gin bukan satu-satunya pilihan; ada juga Echo, Fiber, dan Chi. Gin dipakai di
 modul ini karena paling banyak digunakan, sehingga contoh di internet paling
@@ -653,7 +721,7 @@ melimpah.
 ### Server pertama
 
 ```bash
-go run ./examples/03-gin-ping
+go run ./03-gin-ping
 ```
 
 Isinya:
@@ -691,12 +759,13 @@ Buka http://localhost:8080/ping di browser. Hasilnya:
 
 Empat baris intinya:
 
-| Baris | Artinya |
-|---|---|
-| `gin.Default()` | Membuat "mesin" yang menerima semua request |
+
+| Baris                      | Artinya                                           |
+| ---------------------------- | --------------------------------------------------- |
+| `gin.Default()`            | Membuat "mesin" yang menerima semua request       |
 | `router.GET("/ping", ...)` | Mendaftarkan satu alamat beserta cara menjawabnya |
-| `c.JSON(...)` | Mengirim balasan dalam bentuk JSON |
-| `router.Run(":8080")` | Menyalakan server di port 8080 |
+| `c.JSON(...)`              | Mengirim balasan dalam bentuk JSON                |
+| `router.Run(":8080")`      | Menyalakan server di port 8080                    |
 
 `router.Run` **menahan program di baris itu** selamanya. Terminal tidak kembali
 ke prompt, sesuai penjelasan di Bab 01. Hentikan dengan `Ctrl+C`.
@@ -717,15 +786,17 @@ func namaHandler(c *gin.Context) {
 Satu-satunya bekal handler adalah `c`, yaitu `gin.Context`. Di dalamnya ada
 request yang masuk, dan lewat objek itu pula response dikirim balik.
 
-| Untuk membaca request | |
-|---|---|
-| `c.Param("id")` | Ambil bagian dari URL, misal `/mata-kuliah/3` |
-| `c.Query("kode")` | Ambil dari query string, misal `?kode=IF2010` |
-| `c.ShouldBindJSON(&x)` | Baca body JSON, masukkan ke struct `x` |
 
-| Untuk mengirim response | |
-|---|---|
-| `c.JSON(status, data)` | Kirim JSON beserta status code-nya |
+| Untuk membaca request  |                                              |
+| ------------------------ | ---------------------------------------------- |
+| `c.Param("id")`        | Ambil bagian dari URL, misal`/mata-kuliah/3` |
+| `c.Query("kode")`      | Ambil dari query string, misal`?kode=IF2010` |
+| `c.ShouldBindJSON(&x)` | Baca body JSON, masukkan ke struct`x`        |
+
+
+| Untuk mengirim response |                                    |
+| ------------------------- | ------------------------------------ |
+| `c.JSON(status, data)`  | Kirim JSON beserta status code-nya |
 
 #### Mengambil nilai dari URL
 
@@ -748,13 +819,14 @@ Buka http://localhost:8080/halo/Budi:
 
 Gin menyediakan nama yang mudah dibaca, jadi tidak perlu menghafal angkanya:
 
-| Konstanta | Angka | Dipakai saat |
-|---|---|---|
-| `http.StatusOK` | 200 | Berhasil |
-| `http.StatusCreated` | 201 | Data baru berhasil dibuat |
-| `http.StatusBadRequest` | 400 | Kiriman client tidak valid |
-| `http.StatusNotFound` | 404 | Data yang dicari tidak ada |
-| `http.StatusInternalServerError` | 500 | Kode kita yang bermasalah |
+
+| Konstanta                        | Angka | Dipakai saat               |
+| ---------------------------------- | ------- | ---------------------------- |
+| `http.StatusOK`                  | 200   | Berhasil                   |
+| `http.StatusCreated`             | 201   | Data baru berhasil dibuat  |
+| `http.StatusBadRequest`          | 400   | Kiriman client tidak valid |
+| `http.StatusNotFound`            | 404   | Data yang dicari tidak ada |
+| `http.StatusInternalServerError` | 500   | Kode kita yang bermasalah  |
 
 Menulis `http.StatusNotFound` lebih baik daripada `404` karena maksudnya langsung
 terbaca tanpa mengingat arti angkanya.
@@ -762,18 +834,19 @@ terbaca tanpa mengingat arti angkanya.
 ### CRUD lengkap
 
 ```bash
-go run ./examples/04-gin-crud
+go run ./04-gin-crud
 ```
 
 Contoh ini punya lima alamat:
 
-| Method | Alamat | Fungsi |
-|---|---|---|
-| `GET` | `/mata-kuliah` | Lihat semua |
-| `GET` | `/mata-kuliah/:id` | Lihat satu |
-| `POST` | `/mata-kuliah` | Tambah baru |
-| `PUT` | `/mata-kuliah/:id` | Ubah |
-| `DELETE` | `/mata-kuliah/:id` | Hapus |
+
+| Method   | Alamat             | Fungsi      |
+| ---------- | -------------------- | ------------- |
+| `GET`    | `/mata-kuliah`     | Lihat semua |
+| `GET`    | `/mata-kuliah/:id` | Lihat satu  |
+| `POST`   | `/mata-kuliah`     | Tambah baru |
+| `PUT`    | `/mata-kuliah/:id` | Ubah        |
+| `DELETE` | `/mata-kuliah/:id` | Hapus       |
 
 #### Membaca data yang dikirim client
 
@@ -814,6 +887,144 @@ Tanpa tag `json:"..."`, Go akan mengeluarkan nama field apa adanya, yaitu `SKS`,
 bukan `sks`. Tag inilah yang menjembatani gaya penamaan Go (huruf besar di awal)
 dengan gaya penamaan JSON (huruf kecil).
 
+### Tanpa Gin: kode yang sama dengan net/http
+
+Supaya manfaat Gin terlihat, dua alamat dari contoh 04 ditulis ulang tanpa Gin,
+hanya dengan pustaka bawaan `net/http`. Keduanya menghasilkan **response yang
+sama persis**: status code, isi JSON, dan pesan error.
+
+**Dengan Gin:**
+
+```go
+func main() {
+	router := gin.Default()
+
+	router.GET("/mata-kuliah/:id", ambilSatu)
+	router.POST("/mata-kuliah", tambah)
+
+	router.Run(":8080")
+}
+
+func ambilSatu(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "id harus berupa angka"})
+		return
+	}
+
+	for _, mk := range daftar {
+		if mk.ID == id {
+			c.JSON(http.StatusOK, mk)
+			return
+		}
+	}
+
+	c.JSON(http.StatusNotFound, gin.H{"error": "mata kuliah tidak ditemukan"})
+}
+
+func tambah(c *gin.Context) {
+	var baru MataKuliah
+
+	if err := c.ShouldBindJSON(&baru); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "JSON tidak valid"})
+		return
+	}
+
+	if baru.Kode == "" || baru.Nama == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "kode dan nama wajib diisi"})
+		return
+	}
+
+	baru.ID = idBerikutnya
+	idBerikutnya++
+	daftar = append(daftar, baru)
+
+	c.JSON(http.StatusCreated, baru)
+}
+```
+
+**Tanpa Gin:**
+
+```go
+func main() {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /mata-kuliah/{id}", ambilSatu)
+	mux.HandleFunc("POST /mata-kuliah", tambah)
+
+	http.ListenAndServe(":8080", mux)
+}
+
+// kirimJSON harus ditulis sendiri, dan urutan tiga barisnya tidak boleh tertukar
+func kirimJSON(w http.ResponseWriter, status int, data any) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(data)
+}
+
+func ambilSatu(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		kirimJSON(w, http.StatusBadRequest, map[string]string{"error": "id harus berupa angka"})
+		return
+	}
+
+	for _, mk := range daftar {
+		if mk.ID == id {
+			kirimJSON(w, http.StatusOK, mk)
+			return
+		}
+	}
+
+	kirimJSON(w, http.StatusNotFound, map[string]string{"error": "mata kuliah tidak ditemukan"})
+}
+
+func tambah(w http.ResponseWriter, r *http.Request) {
+	var baru MataKuliah
+
+	if err := json.NewDecoder(r.Body).Decode(&baru); err != nil {
+		kirimJSON(w, http.StatusBadRequest, map[string]string{"error": "JSON tidak valid"})
+		return
+	}
+
+	if baru.Kode == "" || baru.Nama == "" {
+		kirimJSON(w, http.StatusBadRequest, map[string]string{"error": "kode dan nama wajib diisi"})
+		return
+	}
+
+	baru.ID = idBerikutnya
+	idBerikutnya++
+	daftar = append(daftar, baru)
+
+	kirimJSON(w, http.StatusCreated, baru)
+}
+```
+
+Logika bisnisnya (cari di slice, tambah ke slice) **tidak berubah sama sekali**.
+Yang berbeda hanya "pipa" di sekitarnya:
+
+
+| Hal                                    | Tanpa Gin                                            | Dengan Gin                   |
+| ---------------------------------------- | ------------------------------------------------------ | ------------------------------ |
+| Bekal handler                          | Dua:`w` untuk menjawab, `r` untuk membaca            | Satu:`c`                     |
+| Kirim JSON                             | Fungsi`kirimJSON` buatan sendiri                     | `c.JSON`                     |
+| Objek JSON singkat                     | `map[string]string{...}`                             | `gin.H{...}`                 |
+| Baca body                              | `json.NewDecoder(r.Body).Decode(&x)`                 | `c.ShouldBindJSON(&x)`       |
+| Log tiap request di terminal           | Tidak ada, terminal diam saja                        | Otomatis dari`gin.Default()` |
+| Handler kena`panic`                    | Client tidak dapat jawaban apa pun (koneksi diputus) | Client dapat status`500`     |
+| Method salah (`DELETE /mata-kuliah/1`) | Dibalas teks biasa`Method Not Allowed`, bukan JSON   | Bisa diatur agar tetap JSON  |
+
+Jadi jujur saja: untuk dua alamat, `net/http` masih terasa wajar. Sejak Go 1.22,
+pola seperti `"GET /mata-kuliah/{id}"` sudah didukung bawaan. Manfaat Gin baru
+terasa saat proyek membesar: puluhan handler, validasi input (`binding:"required"`
+di tag struct), middleware untuk login, dan pengelompokan alamat dengan
+`router.Group`. Semua itu harus dirakit sendiri kalau memakai `net/http`.
+
+Analoginya seperti memasak. `net/http` itu dapur dengan kompor dan pisau:
+semua masakan bisa dibuat, tapi bumbu dasar diulek sendiri tiap kali. Gin itu
+dapur yang sama ditambah bumbu dasar siap pakai. Hasil masakannya bisa sama,
+hanya waktu dan tenaganya yang berbeda.
+
 ### Mencoba sendiri
 
 `GET` bisa langsung dari browser:
@@ -835,20 +1046,21 @@ JSON dari sana. Alat penggantinya dibahas di [Bab 04](#bab-04-postman).
 
 Hasil sebenarnya dari kelima alamat:
 
-| Request | Response | Status |
-|---|---|---|
-| `POST /mata-kuliah` body `{"kode":"IF2030","nama":"Basis Data","sks":3}` | `{"id":3,"kode":"IF2030","nama":"Basis Data","sks":3}` | 201 |
-| `GET /mata-kuliah/3` | `{"id":3,"kode":"IF2030","nama":"Basis Data","sks":3}` | 200 |
-| `PUT /mata-kuliah/3` body `{"kode":"IF2030","nama":"Basis Data Lanjut","sks":4}` | `{"id":3,"kode":"IF2030","nama":"Basis Data Lanjut","sks":4}` | 200 |
-| `DELETE /mata-kuliah/3` | `{"message":"mata kuliah dihapus"}` | 200 |
-| `GET /mata-kuliah/abc` | `{"error":"id harus berupa angka"}` | 400 |
-| `GET /mata-kuliah/999` | `{"error":"mata kuliah tidak ditemukan"}` | 404 |
+
+| Request                                                                          | Response                                                      | Status |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------- | -------- |
+| `POST /mata-kuliah` body `{"kode":"IF2030","nama":"Basis Data","sks":3}`         | `{"id":3,"kode":"IF2030","nama":"Basis Data","sks":3}`        | 201    |
+| `GET /mata-kuliah/3`                                                             | `{"id":3,"kode":"IF2030","nama":"Basis Data","sks":3}`        | 200    |
+| `PUT /mata-kuliah/3` body `{"kode":"IF2030","nama":"Basis Data Lanjut","sks":4}` | `{"id":3,"kode":"IF2030","nama":"Basis Data Lanjut","sks":4}` | 200    |
+| `DELETE /mata-kuliah/3`                                                          | `{"message":"mata kuliah dihapus"}`                           | 200    |
+| `GET /mata-kuliah/abc`                                                           | `{"error":"id harus berupa angka"}`                           | 400    |
+| `GET /mata-kuliah/999`                                                           | `{"error":"mata kuliah tidak ditemukan"}`                     | 404    |
 
 ### Masalah yang sengaja dibiarkan
 
 Langkahnya:
 
-1. Jalankan `go run ./examples/04-gin-crud`
+1. Jalankan `go run ./04-gin-crud`
 2. Tambah satu mata kuliah lewat `POST`
 3. Tekan `Ctrl+C` untuk mematikan server
 4. Jalankan lagi, lalu buka `GET /mata-kuliah`
@@ -874,17 +1086,18 @@ oleh database. Dibahas di [Bab 05](#bab-05-postgresql).
 
 ### Ringkasan
 
-| Hal | Intinya |
-|---|---|
-| `gin.Default()` | Membuat mesin penerima request |
-| `router.GET/POST/PUT/DELETE` | Mendaftarkan alamat |
-| `c *gin.Context` | Satu-satunya bekal handler: baca request, kirim response |
-| `c.Param("id")` | Ambil bagian berubah-ubah dari URL |
-| `c.ShouldBindJSON(&x)` | Baca body JSON ke dalam struct |
-| `c.JSON(status, data)` | Kirim balasan |
-| Tag `json:"nama"` | Menentukan nama field di JSON |
-| `return` setelah kirim error | Wajib, supaya tidak mengirim dua response |
-| Data di variabel | Hilang saat server mati, alasan kita butuh database |
+
+| Hal                          | Intinya                                                  |
+| ------------------------------ | ---------------------------------------------------------- |
+| `gin.Default()`              | Membuat mesin penerima request                           |
+| `router.GET/POST/PUT/DELETE` | Mendaftarkan alamat                                      |
+| `c *gin.Context`             | Satu-satunya bekal handler: baca request, kirim response |
+| `c.Param("id")`              | Ambil bagian berubah-ubah dari URL                       |
+| `c.ShouldBindJSON(&x)`       | Baca body JSON ke dalam struct                           |
+| `c.JSON(status, data)`       | Kirim balasan                                            |
+| Tag`json:"nama"`             | Menentukan nama field di JSON                            |
+| `return` setelah kirim error | Wajib, supaya tidak mengirim dua response                |
+| Data di variabel             | Hilang saat server mati, alasan kita butuh database      |
 
 ---
 
@@ -900,12 +1113,13 @@ cara mengirim `POST` beserta body JSON dari sana.
 
 Padahal tiga dari empat operasi CRUD butuh itu:
 
-| Operasi | Bisa dari browser? |
-|---|---|
-| `GET`: lihat data | Bisa |
-| `POST`: tambah data | Tidak |
-| `PUT`: ubah data | Tidak |
-| `DELETE`: hapus data | Tidak |
+
+| Operasi              | Bisa dari browser? |
+| ---------------------- | -------------------- |
+| `GET`: lihat data    | Bisa               |
+| `POST`: tambah data  | Tidak              |
+| `PUT`: ubah data     | Tidak              |
+| `DELETE`: hapus data | Tidak              |
 
 Postman bisa mengirim keempatnya, lengkap dengan body dan header yang ditentukan
 sendiri.
@@ -915,7 +1129,7 @@ sendiri.
 Jalankan server contoh dari Bab 03, biarkan hidup di terminal terpisah:
 
 ```bash
-go run ./examples/04-gin-crud
+go run ./04-gin-crud
 ```
 
 Semua percobaan di bab ini mengarah ke server tersebut.
@@ -924,12 +1138,13 @@ Semua percobaan di bab ini mengarah ke server tersebut.
 
 Saat membuat request baru, ada empat bagian:
 
-| Bagian | Letaknya | Gunanya |
-|---|---|---|
-| **Method** | Dropdown di kiri kolom alamat | Memilih `GET` / `POST` / `PUT` / `DELETE` |
-| **URL** | Kolom panjang di tengah | Alamat tujuan |
-| **Body** | Tab di bawah kolom alamat | Data yang dikirim (hanya untuk POST/PUT) |
-| **Response** | Panel bawah | Jawaban server + status code |
+
+| Bagian       | Letaknya                      | Gunanya                                  |
+| -------------- | ------------------------------- | ------------------------------------------ |
+| **Method**   | Dropdown di kiri kolom alamat | Memilih`GET` / `POST` / `PUT` / `DELETE` |
+| **URL**      | Kolom panjang di tengah       | Alamat tujuan                            |
+| **Body**     | Tab di bawah kolom alamat     | Data yang dikirim (hanya untuk POST/PUT) |
+| **Response** | Panel bawah                   | Jawaban server + status code             |
 
 ### 1. Request pertama: GET
 
@@ -1053,11 +1268,12 @@ Kirim ulang `GET /mata-kuliah` untuk memastikan: data `id: 3` sudah tidak ada.
 
 Tiga request berikut sengaja ditolak server:
 
-| Request | Response | Status |
-|---|---|---|
-| `GET /mata-kuliah/abc` | `{"error":"id harus berupa angka"}` | `400` |
-| `GET /mata-kuliah/999` | `{"error":"mata kuliah tidak ditemukan"}` | `404` |
-| `POST /mata-kuliah` dengan body `{"kode":"","nama":""}` | `{"error":"kode dan nama wajib diisi"}` | `400` |
+
+| Request                                                 | Response                                  | Status |
+| --------------------------------------------------------- | ------------------------------------------- | -------- |
+| `GET /mata-kuliah/abc`                                  | `{"error":"id harus berupa angka"}`       | `400`  |
+| `GET /mata-kuliah/999`                                  | `{"error":"mata kuliah tidak ditemukan"}` | `404`  |
+| `POST /mata-kuliah` dengan body `{"kode":"","nama":""}` | `{"error":"kode dan nama wajib diisi"}`   | `400`  |
 
 Ketiganya `4xx`, artinya **kiriman client yang bermasalah**, bukan server yang
 rusak. Status `500` berarti kesalahan ada di kode Go.
@@ -1086,13 +1302,14 @@ Dengan begitu, satu perubahan berlaku untuk semua request.
 
 ### Kesalahan yang paling sering terjadi
 
-| Gejala | Penyebab | Perbaikan |
-|---|---|---|
-| `Could not send request` / `ECONNREFUSED` | Servernya belum jalan | Jalankan `go run ...` di terminal, biarkan terbuka |
-| `400 JSON tidak valid` padahal JSON terlihat benar | Body masih `Text`, belum `JSON` | Ganti dropdown di tab Body |
-| `400 JSON tidak valid` | Ada koma berlebih setelah field terakhir | Hapus koma terakhir |
-| `404 page not found` | Alamat salah ketik, atau method-nya keliru | Cocokkan dengan daftar alamat di kode |
-| Data hilang setelah server di-restart | Memang belum pakai database | Bukan bug, dijelaskan di Bab 05 |
+
+| Gejala                                             | Penyebab                                   | Perbaikan                                         |
+| ---------------------------------------------------- | -------------------------------------------- | --------------------------------------------------- |
+| `Could not send request` / `ECONNREFUSED`          | Servernya belum jalan                      | Jalankan`go run ...` di terminal, biarkan terbuka |
+| `400 JSON tidak valid` padahal JSON terlihat benar | Body masih`Text`, belum `JSON`             | Ganti dropdown di tab Body                        |
+| `400 JSON tidak valid`                             | Ada koma berlebih setelah field terakhir   | Hapus koma terakhir                               |
+| `404 page not found`                               | Alamat salah ketik, atau method-nya keliru | Cocokkan dengan daftar alamat di kode             |
+| Data hilang setelah server di-restart              | Memang belum pakai database                | Bukan bug, dijelaskan di Bab 05                   |
 
 Ada dua jenis 404. `{"error":"mata kuliah tidak ditemukan"}` berarti alamatnya
 benar tapi datanya tidak ada. `404 page not found` berarti **alamatnya** yang
@@ -1122,11 +1339,12 @@ database; tanpa mengetahui bentuk database yang diajak bicara, perintah seperti
 
 Padanannya di Excel:
 
-| Istilah database | Padanan di Excel |
-|---|---|
-| **Tabel** (table) | Satu sheet |
+
+| Istilah database   | Padanan di Excel                   |
+| -------------------- | ------------------------------------ |
+| **Tabel** (table)  | Satu sheet                         |
 | **Kolom** (column) | Judul kolom, menentukan jenis data |
-| **Baris** (row) | Satu baris data |
+| **Baris** (row)    | Satu baris data                    |
 
 Bedanya, database memaksakan aturan: kolom `sks` yang bertipe angka **menolak**
 diisi teks. Aturan ini yang menjaga data tetap konsisten walau diisi banyak
@@ -1134,21 +1352,23 @@ pengguna.
 
 Contoh tabel `mata_kuliah`:
 
-| id | kode | nama | sks | kuota |
-|---|---|---|---|---|
-| 1 | IF2010 | Algoritma dan Pemrograman | 4 | 40 |
-| 2 | IF2020 | Struktur Data | 3 | 35 |
+
+| id | kode   | nama                      | sks | kuota |
+| ---- | -------- | --------------------------- | ----- | ------- |
+| 1  | IF2010 | Algoritma dan Pemrograman | 4   | 40    |
+| 2  | IF2020 | Struktur Data             | 3   | 35    |
 
 ### Tipe data yang sering dipakai
 
-| Tipe | Untuk apa | Contoh |
-|---|---|---|
-| `SERIAL` | Angka yang bertambah otomatis, biasanya untuk `id` | 1, 2, 3, ... |
-| `VARCHAR(n)` | Teks dengan panjang maksimum | `'IF2010'` |
-| `TEXT` | Teks tanpa batas panjang | deskripsi panjang |
-| `INTEGER` | Bilangan bulat | `4` |
-| `BOOLEAN` | Benar atau salah | `TRUE` |
-| `TIMESTAMP` | Tanggal dan waktu | `2026-09-10 08:30:00` |
+
+| Tipe         | Untuk apa                                         | Contoh                |
+| -------------- | --------------------------------------------------- | ----------------------- |
+| `SERIAL`     | Angka yang bertambah otomatis, biasanya untuk`id` | 1, 2, 3, ...          |
+| `VARCHAR(n)` | Teks dengan panjang maksimum                      | `'IF2010'`            |
+| `TEXT`       | Teks tanpa batas panjang                          | deskripsi panjang     |
+| `INTEGER`    | Bilangan bulat                                    | `4`                   |
+| `BOOLEAN`    | Benar atau salah                                  | `TRUE`                |
+| `TIMESTAMP`  | Tanggal dan waktu                                 | `2026-09-10 08:30:00` |
 
 ### Primary key
 
@@ -1184,12 +1404,13 @@ CREATE TABLE mata_kuliah (
 
 Empat kata kuncinya:
 
-| Kata kunci | Artinya |
-|---|---|
-| `PRIMARY KEY` | Kolom penanda unik tiap baris |
-| `NOT NULL` | Wajib diisi, tidak boleh kosong |
-| `UNIQUE` | Tidak boleh ada dua baris dengan nilai sama |
-| `DEFAULT 40` | Kalau tidak diisi, otomatis bernilai 40 |
+
+| Kata kunci    | Artinya                                     |
+| --------------- | --------------------------------------------- |
+| `PRIMARY KEY` | Kolom penanda unik tiap baris               |
+| `NOT NULL`    | Wajib diisi, tidak boleh kosong             |
+| `UNIQUE`      | Tidak boleh ada dua baris dengan nilai sama |
+| `DEFAULT 40`  | Kalau tidak diisi, otomatis bernilai 40     |
 
 Aturan ini dijaga oleh **database**, bukan oleh kode Go. Data yang melanggar
 tetap ditolak walaupun ada bug di program. Inilah lapisan pengaman terakhir.
@@ -1256,9 +1477,10 @@ Bagian ini yang menjelaskan kata "relasional".
 Misalnya perlu mencatat mata kuliah yang diambil tiap mahasiswa. Cara yang salah
 adalah menuliskannya di tabel mahasiswa:
 
-| id | nama | mata_kuliah_diambil |
-|---|---|---|
-| 1 | Budi | IF2010, IF2020, IF2030 |
+
+| id | nama | mata_kuliah_diambil    |
+| ---- | ------ | ------------------------ |
+| 1  | Budi | IF2010, IF2020, IF2030 |
 
 Bentuk ini menyulitkan pencarian ("siapa saja yang mengambil IF2010?"),
 menyulitkan penghitungan total SKS, dan tidak mencegah kode mata kuliah yang
@@ -1300,9 +1522,9 @@ CREATE TABLE mahasiswa (
 );
 
 CREATE TABLE krs (
-    id              SERIAL PRIMARY KEY,
-    mahasiswa_id    INTEGER NOT NULL REFERENCES mahasiswa(id),
-    mata_kuliah_id  INTEGER NOT NULL REFERENCES mata_kuliah(id)
+    id SERIAL PRIMARY KEY,
+    mahasiswa_id INTEGER NOT NULL REFERENCES mahasiswa(id),
+    mata_kuliah_id INTEGER NOT NULL REFERENCES mata_kuliah(id)
 );
 ```
 
@@ -1340,10 +1562,11 @@ WHERE m.nim = '5025231001';
 
 Hasilnya:
 
-| mahasiswa | kode | mata_kuliah | sks |
-|---|---|---|---|
-| Budi | IF2010 | Algoritma dan Pemrograman | 4 |
-| Budi | IF2020 | Struktur Data | 3 |
+
+| mahasiswa | kode   | mata_kuliah               | sks |
+| ----------- | -------- | --------------------------- | ----- |
+| Budi      | IF2010 | Algoritma dan Pemrograman | 4   |
+| Budi      | IF2020 | Struktur Data             | 3   |
 
 Menghitung total SKS yang sudah diambil. Query ini dipakai untuk aturan batas SKS
 di Bab 08:
@@ -1368,16 +1591,17 @@ membuatkannya dari struct Go. SQL tetap dipelajari karena tiga alasan:
 
 ### Ringkasan
 
-| Perintah | Fungsi |
-|---|---|
-| `CREATE TABLE` | Membuat tabel beserta aturannya |
-| `INSERT INTO ... VALUES` | Menambah baris |
-| `SELECT ... FROM ... WHERE` | Membaca dan menyaring |
-| `UPDATE ... SET ... WHERE` | Mengubah, **jangan lupa WHERE** |
-| `DELETE FROM ... WHERE` | Menghapus, **jangan lupa WHERE** |
-| `JOIN ... ON` | Menggabungkan tabel yang berelasi |
-| `PRIMARY KEY` | Penanda unik tiap baris |
-| `FOREIGN KEY` / `REFERENCES` | Menjaga relasi tetap valid |
+
+| Perintah                     | Fungsi                            |
+| ------------------------------ | ----------------------------------- |
+| `CREATE TABLE`               | Membuat tabel beserta aturannya   |
+| `INSERT INTO ... VALUES`     | Menambah baris                    |
+| `SELECT ... FROM ... WHERE`  | Membaca dan menyaring             |
+| `UPDATE ... SET ... WHERE`   | Mengubah,**jangan lupa WHERE**    |
+| `DELETE FROM ... WHERE`      | Menghapus,**jangan lupa WHERE**   |
+| `JOIN ... ON`                | Menggabungkan tabel yang berelasi |
+| `PRIMARY KEY`                | Penanda unik tiap baris           |
+| `FOREIGN KEY` / `REFERENCES` | Menjaga relasi tetap valid        |
 
 ---
 
@@ -1401,11 +1625,16 @@ db.Find(&daftar)
 Dua baris itu menjalankan `SELECT * FROM mata_kuliahs` dan sekaligus mengisi
 slice-nya.
 
-| Tanpa ORM | Dengan GORM |
-|---|---|
-| SQL ditulis sebagai teks, salah ketik baru ketahuan saat dijalankan | Ditulis sebagai kode Go, salah ketik ketahuan saat compile |
-| Hasil query dipindah manual ke struct | Otomatis masuk ke struct |
-| Ganti database berarti menulis ulang banyak query | Sebagian besar query tetap sama |
+
+| Tanpa ORM                                              | Dengan GORM                            |
+| -------------------------------------------------------- | ---------------------------------------- |
+| Semua SQL ditulis sendiri sebagai teks                 | Query sederhana cukup dengan method Go |
+| Hasil query dipindah manual ke struct, kolom per kolom | Otomatis masuk ke struct               |
+| Tabel dibuat sendiri dengan`CREATE TABLE`              | `AutoMigrate` membuatnya dari struct   |
+| Ganti database berarti menulis ulang banyak query      | Sebagian besar query tetap sama        |
+
+Perbandingan kodenya lengkap ada di
+[Tanpa GORM: kode yang sama dengan database/sql](#tanpa-gorm-kode-yang-sama-dengan-databasesql).
 
 ### Struct menjadi tabel
 
@@ -1426,11 +1655,12 @@ menulisnya berbeda.
 
 GORM mengubah nama secara otomatis:
 
-| Di Go | Menjadi di database | Aturan |
-|---|---|---|
-| `MataKuliah` (nama struct) | tabel `mata_kuliahs` | huruf kecil, dipisah `_`, **ditambah `s`** |
-| `Kode` (field) | kolom `kode` | huruf kecil |
-| `BatasSKS` (field) | kolom `batas_sks` | dipisah `_` |
+
+| Di Go                      | Menjadi di database | Aturan                                    |
+| ---------------------------- | --------------------- | ------------------------------------------- |
+| `MataKuliah` (nama struct) | tabel`mata_kuliahs` | huruf kecil, dipisah`_`, **ditambah `s`** |
+| `Kode` (field)             | kolom`kode`         | huruf kecil                               |
+| `BatasSKS` (field)         | kolom`batas_sks`    | dipisah`_`                                |
 
 Nama tabelnya `mata_kuliahs`, bukan `mata_kuliah`, karena GORM memakai bentuk
 jamak. Ini penyebab paling umum tabel tidak ketemu saat dicari di pgAdmin.
@@ -1445,20 +1675,21 @@ func (MataKuliah) TableName() string {
 
 #### Tag GORM yang sering dipakai
 
-| Tag | Artinya | Padanan SQL |
-|---|---|---|
-| `primaryKey` | Kolom penanda unik | `PRIMARY KEY` |
-| `not null` | Wajib diisi | `NOT NULL` |
-| `unique` | Tidak boleh kembar | `UNIQUE` |
-| `size:100` | Panjang maksimum teks | `VARCHAR(100)` |
-| `default:40` | Nilai bawaan | `DEFAULT 40` |
+
+| Tag          | Artinya               | Padanan SQL    |
+| -------------- | ----------------------- | ---------------- |
+| `primaryKey` | Kolom penanda unik    | `PRIMARY KEY`  |
+| `not null`   | Wajib diisi           | `NOT NULL`     |
+| `unique`     | Tidak boleh kembar    | `UNIQUE`       |
+| `size:100`   | Panjang maksimum teks | `VARCHAR(100)` |
+| `default:40` | Nilai bawaan          | `DEFAULT 40`   |
 
 Beberapa tag digabung dengan titik koma: `gorm:"size:10;not null;unique"`.
 
 ### Menyambung ke database
 
 ```bash
-go run ./examples/05-gorm-connect
+go run ./05-gorm-connect
 ```
 
 Inti kodenya:
@@ -1506,12 +1737,13 @@ Kolom yang dibuat GORM:
 
 AutoMigrate hanya bisa **menambah**:
 
-| Perubahan di struct | AutoMigrate melakukannya? |
-|---|---|
-| Menambah field baru | Ya, kolom ditambahkan |
-| Membuat tabel yang belum ada | Ya |
-| Menghapus field | **Tidak**, kolomnya dibiarkan |
-| Mengubah nama field | **Tidak**, dianggap kolom baru |
+
+| Perubahan di struct          | AutoMigrate melakukannya?      |
+| ------------------------------ | -------------------------------- |
+| Menambah field baru          | Ya, kolom ditambahkan          |
+| Membuat tabel yang belum ada | Ya                             |
+| Menghapus field              | **Tidak**, kolomnya dibiarkan  |
+| Mengubah nama field          | **Tidak**, dianggap kolom baru |
 
 Sifat ini disengaja. Menghapus kolom berarti menghapus data, dan itu terlalu
 berisiko untuk dilakukan otomatis.
@@ -1519,7 +1751,7 @@ berisiko untuk dilakukan otomatis.
 ### CRUD dengan GORM
 
 ```bash
-go run ./examples/06-gorm-crud
+go run ./06-gorm-crud
 ```
 
 #### Create
@@ -1608,6 +1840,123 @@ if hasil.RowsAffected == 0 {
 }
 ```
 
+### Tanpa GORM: kode yang sama dengan database/sql
+
+Supaya manfaat GORM terlihat, tiga operasi dari contoh 06 ditulis ulang tanpa
+GORM, hanya dengan pustaka bawaan Go `database/sql`. Keduanya menghasilkan
+**data yang sama persis**.
+
+**Dengan GORM:**
+
+```go
+// Menyambung
+db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+// Membuat tabel
+db.AutoMigrate(&MataKuliah{})
+
+// Create
+mk := MataKuliah{Kode: "IF2010", Nama: "Algoritma dan Pemrograman", SKS: 4, Kuota: 40}
+err = db.Create(&mk).Error
+
+// Read semua
+var semua []MataKuliah
+err = db.Order("kode").Find(&semua).Error
+
+// Read satu
+var satu MataKuliah
+err = db.First(&satu, id).Error
+if errors.Is(err, gorm.ErrRecordNotFound) {
+	// tidak ada
+}
+```
+
+**Tanpa GORM:**
+
+```go
+import _ "github.com/jackc/pgx/v5/stdlib"   // driver PostgreSQL
+
+// Menyambung
+db, err := sql.Open("pgx", dsn)
+
+// Membuat tabel: harus ditulis sendiri
+db.Exec(`CREATE TABLE IF NOT EXISTS mata_kuliahs (
+	id    BIGSERIAL PRIMARY KEY,
+	kode  VARCHAR(10) NOT NULL UNIQUE,
+	nama  VARCHAR(100) NOT NULL,
+	sks   BIGINT NOT NULL,
+	kuota BIGINT DEFAULT 40
+)`)
+
+// Create
+mk := MataKuliah{Kode: "IF2010", Nama: "Algoritma dan Pemrograman", SKS: 4, Kuota: 40}
+err = db.QueryRow(
+	`INSERT INTO mata_kuliahs (kode, nama, sks, kuota)
+	 VALUES ($1, $2, $3, $4) RETURNING id`,
+	mk.Kode, mk.Nama, mk.SKS, mk.Kuota,
+).Scan(&mk.ID)
+
+// Read semua
+rows, err := db.Query(`SELECT id, kode, nama, sks, kuota FROM mata_kuliahs ORDER BY kode`)
+if err != nil {
+	return err
+}
+defer rows.Close()
+
+var semua []MataKuliah
+for rows.Next() {
+	var m MataKuliah
+	if err := rows.Scan(&m.ID, &m.Kode, &m.Nama, &m.SKS, &m.Kuota); err != nil {
+		return err
+	}
+	semua = append(semua, m)
+}
+if err := rows.Err(); err != nil {
+	return err
+}
+
+// Read satu
+var satu MataKuliah
+err = db.QueryRow(`SELECT id, kode, nama, sks, kuota FROM mata_kuliahs WHERE id = $1`, id).
+	Scan(&satu.ID, &satu.Kode, &satu.Nama, &satu.SKS, &satu.Kuota)
+if errors.Is(err, sql.ErrNoRows) {
+	// tidak ada
+}
+```
+
+Yang berbeda:
+
+
+| Hal                      | Tanpa GORM                                          | Dengan GORM                  |
+| -------------------------- | ----------------------------------------------------- | ------------------------------ |
+| Membuat tabel            | `CREATE TABLE` ditulis sendiri                      | `AutoMigrate(&MataKuliah{})` |
+| Nama kolom               | Diketik ulang di setiap query                       | Dibaca dari struct           |
+| Memindah hasil ke struct | `Scan` kolom demi kolom, urutannya harus cocok      | Otomatis                     |
+| Banyak baris             | Loop`rows.Next()`, `rows.Close()`, cek `rows.Err()` | `Find(&semua)`               |
+| Mengambil ID baru        | Tambah`RETURNING id` lalu `Scan`                    | Otomatis terisi di struct    |
+| Placeholder              | `$1`, `$2`, ... (khas PostgreSQL)                   | `?`                          |
+| Data tidak ditemukan     | `sql.ErrNoRows`                                     | `gorm.ErrRecordNotFound`     |
+
+Jebakan yang paling sering terjadi tanpa GORM: jumlah kolom di `SELECT` tidak
+sama dengan jumlah variabel di `Scan`. Kompiler Go tidak memeriksanya, jadi
+baru ketahuan saat program berjalan:
+
+```
+sql: expected 5 destination arguments in Scan, not 4
+```
+
+Menambah satu field baru ke struct berarti mencari dan mengubah **setiap**
+`SELECT` dan `Scan` yang memakai tabel itu. Dengan GORM, cukup tambah field-nya.
+
+Perlu diingat, GORM juga tidak memeriksa semuanya saat compile. Nama kolom di
+`db.Where("sks = ?", 3)` tetap berupa teks, sehingga salah ketik seperti
+`"skss = ?"` baru ketahuan saat dijalankan, sama seperti SQL biasa.
+
+Jadi GORM tidak menghilangkan SQL. GORM menghapus **pekerjaan berulang** di
+sekitarnya: menulis ulang nama kolom, memindahkan hasil ke struct, dan menutup
+`rows`. Untuk query yang rumit, SQL langsung tetap dipakai, dibahas di
+[Kalau GORM tidak cukup](#kalau-gorm-tidak-cukup).
+
 ### Relasi antar tabel
 
 Tabel penghubung `krs` dari Bab 05 ditulis begini di GORM:
@@ -1682,32 +2031,35 @@ mencukupi.
 
 ### Ringkasan
 
-| Hal | Intinya |
-|---|---|
-| Struct jadi tabel | Nama tabel jadi **jamak**: `MataKuliah` jadi `mata_kuliahs` |
-| Tag `gorm:"..."` | Aturan kolom: `primaryKey`, `not null`, `unique`, `size`, `default` |
-| `gorm.Open(...)` | Menyambung memakai DSN dari `.env` |
-| `AutoMigrate` | Membuat tabel dan menambah kolom, **tidak pernah menghapus** |
-| `db.Create(&x)` | Simpan; `&` supaya ID bisa diisikan balik |
-| `db.Find` / `First` / `Where` | Membaca data |
-| `db.Where("sks = ?", n)` | **Selalu pakai `?`**, mencegah SQL injection |
-| `gorm.ErrRecordNotFound` | Data tidak ada; log merahnya bukan crash |
-| `RowsAffected` | Cara tahu Delete benar-benar menghapus sesuatu |
-| `Preload("Nama")` | **Wajib** kalau ingin data relasinya ikut terisi |
+
+| Hal                           | Intinya                                                            |
+| ------------------------------- | -------------------------------------------------------------------- |
+| Struct jadi tabel             | Nama tabel jadi**jamak**: `MataKuliah` jadi `mata_kuliahs`         |
+| Tag`gorm:"..."`               | Aturan kolom:`primaryKey`, `not null`, `unique`, `size`, `default` |
+| `gorm.Open(...)`              | Menyambung memakai DSN dari`.env`                                  |
+| `AutoMigrate`                 | Membuat tabel dan menambah kolom,**tidak pernah menghapus**        |
+| `db.Create(&x)`               | Simpan;`&` supaya ID bisa diisikan balik                           |
+| `db.Find` / `First` / `Where` | Membaca data                                                       |
+| `db.Where("sks = ?", n)`      | **Selalu pakai `?`**, mencegah SQL injection                       |
+| `gorm.ErrRecordNotFound`      | Data tidak ada; log merahnya bukan crash                           |
+| `RowsAffected`                | Cara tahu Delete benar-benar menghapus sesuatu                     |
+| `Preload("Nama")`             | **Wajib** kalau ingin data relasinya ikut terisi                   |
 
 ---
 
 ## Bab 07: Swagger
 
-> **Mulai bab ini pembahasan berpindah ke proyek KRS**, yang berada di repo
-> terpisah. Clone dulu kalau belum:
+> **Mulai bab ini pembahasan berpindah ke proyek KRS**, yang berada di folder
+> `Materi 3/BE` repo LBE-2026. Clone dulu kalau belum:
 >
 > ```bash
-> git clone https://github.com/FrenaldyH/taking-course-simulation.git
-> cd taking-course-simulation
+> git clone https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026.git
+> cd "LBE-2026/Materi 3/BE"
 > cp .env.example .env      # isi password PostgreSQL kamu
 > go mod download
 > ```
+>
+> Tanda kutip pada `cd` wajib, karena nama folder `Materi 3` mengandung spasi.
 >
 > Folder `examples/` yang dipakai Bab 01 sampai 06 tidak lagi diperlukan mulai
 > dari sini.
@@ -1719,11 +2071,12 @@ Tapi bagaimana tim frontend tahu isi menunya?
 
 Cara yang biasa dipakai orang, dan masalahnya:
 
-| Cara | Masalahnya |
-|---|---|
-| Chat ke temanmu | Hilang tertimbun pesan lain |
+
+| Cara                            | Masalahnya                               |
+| --------------------------------- | ------------------------------------------ |
+| Chat ke temanmu                 | Hilang tertimbun pesan lain              |
 | Dokumen terpisah di Google Docs | Kode berubah, dokumennya lupa diperbarui |
-| Suruh baca kodenya | Frontend tidak selalu bisa membaca Go |
+| Suruh baca kodenya              | Frontend tidak selalu bisa membaca Go    |
 
 Semuanya bermuara ke satu masalah yang sama: **dokumentasi terpisah dari kode akan
 selalu ketinggalan.**
@@ -1780,13 +2133,14 @@ Keterangan tentang API secara keseluruhan ditulis tepat di atas `func main()`:
 func main() {
 ```
 
-| Anotasi | Isinya |
-|---|---|
-| `@title` | Nama API, tampil sebagai judul halaman |
-| `@version` | Versi API |
+
+| Anotasi        | Isinya                                   |
+| ---------------- | ------------------------------------------ |
+| `@title`       | Nama API, tampil sebagai judul halaman   |
+| `@version`     | Versi API                                |
 | `@description` | Penjelasan; boleh ditulis beberapa baris |
-| `@host` | Alamat server |
-| `@BasePath` | Awalan seluruh alamat |
+| `@host`        | Alamat server                            |
+| `@BasePath`    | Awalan seluruh alamat                    |
 
 ### Anotasi per endpoint
 
@@ -1807,14 +2161,15 @@ Ditulis tepat di atas fungsi handler-nya:
 func AmbilMataKuliah(c *gin.Context) {
 ```
 
-| Anotasi | Gunanya |
-|---|---|
-| `@Summary` | Judul singkat, tampil di daftar |
-| `@Tags` | Pengelompokan endpoint |
-| `@Accept` / `@Produce` | Format yang diterima atau dikirim |
-| `@Param` | Satu masukan: nama, letak, tipe, wajib, keterangan |
-| `@Success` / `@Failure` | Kemungkinan balasan beserta bentuk datanya |
-| `@Router` | **Wajib**: alamat dan method-nya |
+
+| Anotasi                 | Gunanya                                            |
+| ------------------------- | ---------------------------------------------------- |
+| `@Summary`              | Judul singkat, tampil di daftar                    |
+| `@Tags`                 | Pengelompokan endpoint                             |
+| `@Accept` / `@Produce`  | Format yang diterima atau dikirim                  |
+| `@Param`                | Satu masukan: nama, letak, tipe, wajib, keterangan |
+| `@Success` / `@Failure` | Kemungkinan balasan beserta bentuk datanya         |
+| `@Router`               | **Wajib**: alamat dan method-nya                   |
 
 Letak `@Param` bisa `body`, `path` (bagian dari URL), atau `query`:
 
@@ -1834,11 +2189,12 @@ swag init -g cmd/main.go -o ./api-docs --parseDependency --parseInternal
 
 Arti tiap tanda:
 
-| Bagian | Artinya |
-|---|---|
-| `-g cmd/main.go` | Berkas tempat anotasi umum berada |
-| `-o ./api-docs` | Folder tempat hasilnya ditulis |
-| `--parseInternal` | Ikut membaca folder `internal/` |
+
+| Bagian              | Artinya                             |
+| --------------------- | ------------------------------------- |
+| `-g cmd/main.go`    | Berkas tempat anotasi umum berada   |
+| `-o ./api-docs`     | Folder tempat hasilnya ditulis      |
+| `--parseInternal`   | Ikut membaca folder`internal/`      |
 | `--parseDependency` | Ikut membaca tipe dari pustaka lain |
 
 #### Jebakan 1: `-o ./api-docs` wajib
@@ -1871,9 +2227,10 @@ ParseComment error: cannot find type definition: model.KRS
 
 Dengan `--parseInternal`, swag memberi awalan nama foldernya:
 
-| Salah | Benar |
-|---|---|
-| `model.KRS` | `internal_model.KRS` |
+
+| Salah                   | Benar                            |
+| ------------------------- | ---------------------------------- |
+| `model.KRS`             | `internal_model.KRS`             |
 | `handler.ErrorResponse` | `internal_handler.ErrorResponse` |
 
 Path lengkap seperti `github.com/nama/proyek/internal/model.KRS` juga **tidak**
@@ -1889,7 +2246,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 
 	// Blank import: mendaftarkan hasil generate supaya bisa dibaca Swagger UI
-	_ "github.com/FrenaldyH/taking-course-simulation/api-docs"
+	_ "krs-api/api-docs"
 )
 
 func RegisterRoutes(router *gin.Engine) {
@@ -1943,28 +2300,30 @@ Ini penyebab paling umum perubahan tidak muncul di halaman.
 
 Keduanya dipakai bersamaan, bukan saling menggantikan:
 
-| | Swagger | Postman |
-|---|---|---|
-| Sumber isinya | Otomatis dari komentar di kode | Disusun manual |
-| Selalu sesuai kode? | Ya, selama rutin di-generate | Tidak, harus dirawat manual |
-| Menyimpan skenario uji | Tidak | Ya |
-| Untuk siapa | Pengguna API | Pengembang API |
+
+|                        | Swagger                        | Postman                     |
+| ------------------------ | -------------------------------- | ----------------------------- |
+| Sumber isinya          | Otomatis dari komentar di kode | Disusun manual              |
+| Selalu sesuai kode?    | Ya, selama rutin di-generate   | Tidak, harus dirawat manual |
+| Menyimpan skenario uji | Tidak                          | Ya                          |
+| Untuk siapa            | Pengguna API                   | Pengembang API              |
 
 Ringkasnya: **Postman untuk mengembangkan, Swagger untuk menyerahkan.**
 
 ### Ringkasan
 
-| Hal | Intinya |
-|---|---|
-| Kenapa Swagger | Dokumentasi menempel di kode, jadi tidak basi |
-| Pasang | `go get` pustakanya, lalu `go install` alat `swag` |
-| Anotasi umum | Di atas `func main()` |
-| Anotasi endpoint | Di atas tiap handler; `@Router` wajib |
-| Generate | `swag init -g cmd/main.go -o ./api-docs --parseDependency --parseInternal` |
-| **Jebakan 1** | Tanpa `-o`, hasilnya menimpa folder `docs/` |
-| **Jebakan 2** | Tipe di `internal/` ditulis `internal_model.KRS`, bukan `model.KRS` |
-| Halamannya | http://localhost:8080/swagger/index.html |
-| Ingat | Setiap ubah anotasi, jalankan `swag init` lagi |
+
+| Hal              | Intinya                                                                    |
+| ------------------ | ---------------------------------------------------------------------------- |
+| Kenapa Swagger   | Dokumentasi menempel di kode, jadi tidak basi                              |
+| Pasang           | `go get` pustakanya, lalu `go install` alat `swag`                         |
+| Anotasi umum     | Di atas`func main()`                                                       |
+| Anotasi endpoint | Di atas tiap handler;`@Router` wajib                                       |
+| Generate         | `swag init -g cmd/main.go -o ./api-docs --parseDependency --parseInternal` |
+| **Jebakan 1**    | Tanpa`-o`, hasilnya menimpa folder `docs/`                                 |
+| **Jebakan 2**    | Tipe di`internal/` ditulis `internal_model.KRS`, bukan `model.KRS`         |
+| Halamannya       | http://localhost:8080/swagger/index.html                                   |
+| Ingat            | Setiap ubah anotasi, jalankan`swag init` lagi                              |
 
 ---
 
@@ -1975,8 +2334,8 @@ belajar satu hal pada satu waktu, tapi bukan begitu cara proyek nyata ditulis.
 
 Bab ini membedah proyek yang sudah jadi: **API pengisian KRS**.
 
-> Kodenya ada di repo
-> [taking-course-simulation](https://github.com/FrenaldyH/taking-course-simulation).
+> Kodenya ada di folder
+> [`Materi 3/BE`](https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/tree/main/Materi%203/BE).
 > Buka di VS Code sambil membaca bab ini, penjelasannya menunjuk berkas
 > demi berkas. Kalau belum di-clone, langkahnya ada di
 > [Bab 07](#bab-07-swagger).
@@ -1998,21 +2357,23 @@ dan keputusan itu perlu tempat tinggal yang jelas.
 Contoh `04-gin-crud` menaruh semuanya dalam satu berkas. Untuk lima endpoint itu
 masih terbaca. Tapi bayangkan setelah 20 fitur:
 
-| Semua di satu berkas | Dipisah per peran |
-|---|---|
-| Awalnya lebih cepat ditulis | Awalnya terasa lebih lambat |
-| Setelah 20 fitur jadi ribuan baris | Tiap berkas tetap pendek |
-| Query database tersebar di mana-mana | Semua query ada di satu tempat |
-| Ganti PostgreSQL ke MySQL berarti menyisir seluruh berkas | Cukup ubah folder `repo/` |
+
+| Semua di satu berkas                                      | Dipisah per peran              |
+| ----------------------------------------------------------- | -------------------------------- |
+| Awalnya lebih cepat ditulis                               | Awalnya terasa lebih lambat    |
+| Setelah 20 fitur jadi ribuan baris                        | Tiap berkas tetap pendek       |
+| Query database tersebar di mana-mana                      | Semua query ada di satu tempat |
+| Ganti PostgreSQL ke MySQL berarti menyisir seluruh berkas | Cukup ubah folder`repo/`       |
 
 Kembali ke analogi restoran di Bab 01, dapur yang rapi membagi tugas:
 
-| Peran di restoran | Folder | Tugasnya |
-|---|---|---|
-| **Pelayan** | `internal/handler/` | Menerima pesanan, mengantar hasil. Tidak ikut memasak |
-| **Koki** | `internal/service/` | Mengolah, memutuskan, menolak pesanan yang melanggar aturan |
-| **Petugas gudang** | `internal/repo/` | Satu-satunya yang boleh masuk gudang |
-| **Kartu resep** | `internal/model/` | Menjelaskan bentuk data |
+
+| Peran di restoran  | Folder              | Tugasnya                                                    |
+| -------------------- | --------------------- | ------------------------------------------------------------- |
+| **Pelayan**        | `internal/handler/` | Menerima pesanan, mengantar hasil. Tidak ikut memasak       |
+| **Koki**           | `internal/service/` | Mengolah, memutuskan, menolak pesanan yang melanggar aturan |
+| **Petugas gudang** | `internal/repo/`    | Satu-satunya yang boleh masuk gudang                        |
+| **Kartu resep**    | `internal/model/`   | Menjelaskan bentuk data                                     |
 
 ### Perjalanan satu request
 
@@ -2227,11 +2588,12 @@ func respondError(c *gin.Context, err error) {
 Bab 01 memperkenalkan `400` dan `404`. Ketiga pelanggaran aturan di atas
 memakai `409 Conflict`, dan bedanya penting:
 
-| Status | Artinya | Contoh di sini |
-|---|---|---|
-| `400` | Kiriman **salah bentuk** | `mahasiswa_id` tidak diisi |
-| `404` | Yang dicari **tidak ada** | mahasiswa dengan id 999 |
-| `409` | Kiriman **benar**, tapi keadaan saat ini tidak mengizinkan | kuota sudah penuh |
+
+| Status | Artinya                                                   | Contoh di sini             |
+| -------- | ----------------------------------------------------------- | ---------------------------- |
+| `400`  | Kiriman**salah bentuk**                                   | `mahasiswa_id` tidak diisi |
+| `404`  | Yang dicari**tidak ada**                                  | mahasiswa dengan id 999    |
+| `409`  | Kiriman**benar**, tapi keadaan saat ini tidak mengizinkan | kuota sudah penuh          |
 
 Permintaan "ambil IF2040" bentuknya benar dan datanya ada. Yang menghalangi adalah
 keadaan: kursinya sudah habis. Itu bukan `400`, dan bukan salah pengguna
@@ -2264,13 +2626,14 @@ Dua data contoh sengaja dibuat mudah diuji:
 
 ### Mencoba di Postman
 
-| # | Request | Hasil |
-|---|---|---|
-| 1 | `GET /mata-kuliah` | 7 mata kuliah |
-| 2 | `POST /krs` body `{"mahasiswa_id":1,"mata_kuliah_id":1}` | `201` |
-| 3 | Ulangi request nomor 2 | `409`: `mata kuliah ini sudah diambil` |
-| 4 | `GET /mahasiswa/1/krs` | KRS Budi, lengkap dengan detail mata kuliahnya |
-| 5 | `DELETE /krs/1` | `200`: `mata kuliah berhasil dibatalkan` |
+
+| # | Request                                                  | Hasil                                          |
+| --- | ---------------------------------------------------------- | ------------------------------------------------ |
+| 1 | `GET /mata-kuliah`                                       | 7 mata kuliah                                  |
+| 2 | `POST /krs` body `{"mahasiswa_id":1,"mata_kuliah_id":1}` | `201`                                          |
+| 3 | Ulangi request nomor 2                                   | `409`: `mata kuliah ini sudah diambil`         |
+| 4 | `GET /mahasiswa/1/krs`                                   | KRS Budi, lengkap dengan detail mata kuliahnya |
+| 5 | `DELETE /krs/1`                                          | `200`: `mata kuliah berhasil dibatalkan`       |
 
 Memicu aturan kuota:
 
@@ -2401,13 +2764,14 @@ DELETE /krs/abc    -> 400  {"error":"id harus berupa angka"}
 
 #### Pola yang berulang
 
-| Langkah | Berkas | Pertanyaan yang dijawab |
-|---|---|---|
-| 1 | `internal/model/` | Apakah butuh data baru? |
-| 2 | `internal/repo/` | Bagaimana mengambil atau menyimpannya di database? |
-| 3 | `internal/service/` | Aturan apa yang berlaku? |
-| 4 | `internal/handler/` | Apa masukannya, dan apa balasannya? |
-| 5 | `routes/routes.go` | Alamatnya apa? |
+
+| Langkah | Berkas              | Pertanyaan yang dijawab                            |
+| --------- | --------------------- | ---------------------------------------------------- |
+| 1       | `internal/model/`   | Apakah butuh data baru?                            |
+| 2       | `internal/repo/`    | Bagaimana mengambil atau menyimpannya di database? |
+| 3       | `internal/service/` | Aturan apa yang berlaku?                           |
+| 4       | `internal/handler/` | Apa masukannya, dan apa balasannya?                |
+| 5       | `routes/routes.go`  | Alamatnya apa?                                     |
 
 Setiap penambahan fitur menjawab lima pertanyaan itu berurutan. Jawaban yang
 jatuh ke lapisan yang salah, misalnya aturan bisnis tertulis di handler,
@@ -2429,63 +2793,69 @@ menandakan ada yang perlu dipindahkan.
 
 ### Membuka terminal
 
-| OS | Cara |
-|---|---|
-| Windows | `Win`, ketik "PowerShell", Enter |
-| macOS | `Cmd+Space`, ketik "Terminal", Enter |
-| Linux | `Ctrl+Alt+T` |
-| VS Code | `` Ctrl+` `` |
+
+| OS      | Cara                                 |
+| --------- | -------------------------------------- |
+| Windows | `Win`, ketik "PowerShell", Enter     |
+| macOS   | `Cmd+Space`, ketik "Terminal", Enter |
+| Linux   | `Ctrl+Alt+T`                         |
+| VS Code | ``Ctrl+` ``                          |
 
 ### Navigasi folder
 
-| Perintah | Arti |
-|---|---|
-| `pwd` | Folder saat ini |
-| `ls` | Isi folder. Command Prompt lama: `dir` |
-| `cd <folder>` | Masuk folder |
-| `cd ..` | Naik satu tingkat |
-| `Tab` | Lengkapi nama folder otomatis |
+
+| Perintah      | Arti                                  |
+| --------------- | --------------------------------------- |
+| `pwd`         | Folder saat ini                       |
+| `ls`          | Isi folder. Command Prompt lama:`dir` |
+| `cd <folder>` | Masuk folder                          |
+| `cd ..`       | Naik satu tingkat                     |
+| `Tab`         | Lengkapi nama folder otomatis         |
 
 ### Perintah Go
 
-| Perintah | Arti |
-|---|---|
-| `go version` | Versi Go yang terpasang |
-| `go run <folder>` | Jalankan program |
-| `go get <pustaka>` | Unduh pustaka |
-| `go mod download` | Unduh seluruh pustaka di `go.mod` |
-| `go mod tidy` | Rapikan daftar pustaka |
-| `go build ./...` | Compile tanpa menjalankan |
-| `gofmt -w .` | Rapikan format kode |
+
+| Perintah           | Arti                             |
+| -------------------- | ---------------------------------- |
+| `go version`       | Versi Go yang terpasang          |
+| `go run <folder>`  | Jalankan program                 |
+| `go get <pustaka>` | Unduh pustaka                    |
+| `go mod download`  | Unduh seluruh pustaka di`go.mod` |
+| `go mod tidy`      | Rapikan daftar pustaka           |
+| `go build ./...`   | Compile tanpa menjalankan        |
+| `gofmt -w .`       | Rapikan format kode              |
 
 ### Saat program berjalan
 
-| Tombol | Fungsi |
-|---|---|
-| `Ctrl+C` | Hentikan server |
+
+| Tombol     | Fungsi                            |
+| ------------ | ----------------------------------- |
+| `Ctrl+C`   | Hentikan server                   |
 | Panah atas | Panggil ulang perintah sebelumnya |
 
 ### Perintah Git
 
-| Perintah | Arti |
-|---|---|
-| `git clone <url>` | Unduh proyek dari GitHub |
-| `git status` | Berkas apa saja yang berubah |
-| `git pull` | Ambil pembaruan terbaru |
+
+| Perintah          | Arti                         |
+| ------------------- | ------------------------------ |
+| `git clone <url>` | Unduh proyek dari GitHub     |
+| `git status`      | Berkas apa saja yang berubah |
+| `git pull`        | Ambil pembaruan terbaru      |
 
 ### Membaca pesan error
 
 Baris paling atas biasanya penyebab sebenarnya. Nama berkas dan nomor baris,
 misalnya `main.go:15`, menunjuk lokasi tepatnya.
 
-| Pesan | Artinya |
-|---|---|
-| `undefined: xxx` | Nama fungsi atau variabel belum dibuat, atau salah ketik |
-| `expected ';'` / `syntax error` | Ada kurung `{` `}` yang belum ditutup |
-| `connection refused` | PostgreSQL belum jalan |
-| `password authentication failed` | Password di `.env` salah |
-| `port 8080 already in use` | Server lama masih jalan, tekan `Ctrl+C` di terminalnya |
-| `404 page not found` | Server hidup, route-nya yang belum dibuat |
+
+| Pesan                            | Artinya                                                  |
+| ---------------------------------- | ---------------------------------------------------------- |
+| `undefined: xxx`                 | Nama fungsi atau variabel belum dibuat, atau salah ketik |
+| `expected ';'` / `syntax error`  | Ada kurung`{` `}` yang belum ditutup                     |
+| `connection refused`             | PostgreSQL belum jalan                                   |
+| `password authentication failed` | Password di`.env` salah                                  |
+| `port 8080 already in use`       | Server lama masih jalan, tekan`Ctrl+C` di terminalnya    |
+| `404 page not found`             | Server hidup, route-nya yang belum dibuat                |
 
 ---
 
@@ -2498,23 +2868,25 @@ modul, jadi materi di atas bisa dibaca tanpa mengunduh apa pun.
 
 Enam contoh yang bisa langsung dijalankan:
 
-- Telusuri: https://github.com/FrenaldyH/taking-course-simulation/tree/materi/examples
-- Unduh ZIP: https://github.com/FrenaldyH/taking-course-simulation/archive/refs/heads/materi.zip
+- Telusuri: https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/tree/main/Materi%203/examples
+- Unduh ZIP: https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/archive/refs/heads/main.zip
+  (berisi seluruh repo, contohnya ada di folder `Materi 3/examples`)
 
-| Folder | Dipakai di | Isi |
-|---|---|---|
-| `examples/01-hello` | Bab 02 | Variabel, tipe data, slice |
-| `examples/02-struct` | Bab 02 | Struct, error handling, pointer |
-| `examples/03-gin-ping` | Bab 03 | Server Gin paling minimal |
-| `examples/04-gin-crud` | Bab 03, 04 | CRUD lengkap, data masih di variabel |
-| `examples/05-gorm-connect` | Bab 06 | Koneksi PostgreSQL dan `AutoMigrate` |
-| `examples/06-gorm-crud` | Bab 06 | CRUD, relasi, dan `Preload` |
 
-Menjalankannya:
+| Folder                     | Dipakai di | Isi                                  |
+| ---------------------------- | ------------ | -------------------------------------- |
+| `examples/01-hello`        | Bab 02     | Variabel, tipe data, slice           |
+| `examples/02-struct`       | Bab 02     | Struct, error handling, pointer      |
+| `examples/03-gin-ping`     | Bab 03     | Server Gin paling minimal            |
+| `examples/04-gin-crud`     | Bab 03, 04 | CRUD lengkap, data masih di variabel |
+| `examples/05-gorm-connect` | Bab 06     | Koneksi PostgreSQL dan`AutoMigrate`  |
+| `examples/06-gorm-crud`    | Bab 06     | CRUD, relasi, dan`Preload`           |
+
+Menjalankannya, dari folder `Materi 3/examples`:
 
 ```bash
 go mod download
-go run ./examples/01-hello
+go run ./01-hello
 ```
 
 Contoh 05 dan 06 memerlukan PostgreSQL yang sudah jalan dan berkas `.env`.
@@ -2522,21 +2894,22 @@ Sisanya jalan tanpa persiapan tambahan.
 
 ### Proyek KRS
 
-Kode yang dibedah di Bab 07 dan Bab 08:
+Kode yang dibedah di Bab 07 dan Bab 08 ada di folder `Materi 3/BE`:
 
-https://github.com/FrenaldyH/taking-course-simulation
+https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026/tree/main/Materi%203/BE
 
-| Berkas | Isi |
-|---|---|
-| `postman/krs-api.postman_collection.json` | 13 request siap import ke Postman, termasuk skenario yang ditolak server |
-| `docs/schema/schema.dbml` | Skema database, dibuka dengan extension dbdiagram di VS Code atau di https://dbdiagram.io |
-| `api-docs/` | Hasil generate Swagger |
+
+| Berkas                                    | Isi                                                                                       |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `postman/krs-api.postman_collection.json` | 13 request siap import ke Postman, termasuk skenario yang ditolak server                  |
+| `docs/schema/schema.dbml`                 | Skema database, dibuka dengan extension dbdiagram di VS Code atau di https://dbdiagram.io |
+| `api-docs/`                               | Hasil generate Swagger                                                                    |
 
 Menjalankannya:
 
 ```bash
-git clone https://github.com/FrenaldyH/taking-course-simulation.git
-cd taking-course-simulation
+git clone https://github.com/Algoritma-dan-Pemrograman-ITS/LBE-2026.git
+cd "LBE-2026/Materi 3/BE"
 cp .env.example .env
 go mod download
 go run ./cmd
